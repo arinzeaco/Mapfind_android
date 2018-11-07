@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:background="@color/colorAccent"
+    android:translationZ="10dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:orientation="horizontal">
+
+
+            <ImageButton
+                android:id="@+id/backbtn"
+                android:layout_width="24dp"
+                android:layout_height="22dp"
+                android:layout_marginTop="17dp"
+                android:background="@drawable/back"
+                android:backgroundTint="@color/bg_dark"
+                android:clickable="false"
+                android:contentDescription="@null"
+                android:focusable="false"
+                android:focusableInTouchMode="false" />
+
+
+            <TextView
+                android:id="@+id/toolbartitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="center_horizontal"
+                android:maxLines="1"
+                android:maxLength="25"
+
+                android:text="title"
+                android:textColor="@color/White"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:textAlignment="center"
+                android:textAllCaps="true"
+                android:textSize="19sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/right_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+
+                android:text="Save"
+                android:textColor="@color/White"
+                android:textSize="19dp"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+
+ </RelativeLayout>

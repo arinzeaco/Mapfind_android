@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "657878517368",
+    "firebase_url": "https://mapfind-efdae.firebaseio.com",
+    "project_id": "mapfind-efdae",
+    "storage_bucket": "mapfind-efdae.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:657878517368:android:6deeef4934a69d6e",
+        "android_client_info": {
+          "package_name": "obi.mapfind"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "657878517368-1de6u5thjjo56lveo1h5d4g1o7524vg7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "obi.mapfind",
+            "certificate_hash": "8d9c7d476167cfeb8395af94abb6ad30aa7cdee2"
+          }
+        },
+        {
+          "client_id": "657878517368-rpcm5rh5l3c6qjsjhbsamknp2bihapgp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCTiulPb4diaCtXIrdiiwPxNJqqPDIjFzc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "657878517368-rpcm5rh5l3c6qjsjhbsamknp2bihapgp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

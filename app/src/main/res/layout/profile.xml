@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:id="@+id/layouts"
+        tools:context="details.Profile">
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/activity_toolbar" />
+
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:layout_below="@+id/toolbar">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:focusableInTouchMode="true"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                >
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:id="@+id/swot">
+
+                    <ImageView
+                        android:id="@+id/propic"
+                        android:layout_width="120dp"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_gravity="center_horizontal"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="TODO" />
+
+                    <Button
+                        android:id="@+id/button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="14dp"
+                        android:text="Change Image" />
+                </RelativeLayout>
+
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+
+                        >
+
+                        <EditText
+                            android:id="@+id/name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+
+                            android:hint="Name"
+                            android:inputType="text"
+                            android:maxLength="35"
+                            android:textColor="@android:color/black"
+                            android:textColorHint="@android:color/white" />
+                    </android.support.design.widget.TextInputLayout>
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+
+                        android:layout_marginTop="6dp"
+                        android:layout_height="wrap_content">
+
+                        <EditText
+                            android:id="@+id/email"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Email"
+                            android:inputType="text"
+
+                            android:maxLength="40"
+                            android:textColor="@android:color/black"
+                            android:textColorHint="@android:color/white" />
+                    </android.support.design.widget.TextInputLayout>
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_marginTop="6dp"
+                        android:layout_height="wrap_content">
+
+                        <EditText
+                            android:id="@+id/phone"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Phone"
+                            android:inputType="textCapSentences|textMultiLine"
+                            android:maxLength="2000"
+                            android:maxLines="4"
+                            android:scrollbars="vertical" />
+                    </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="6dp"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/address"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="address"
+                        android:inputType="textCapSentences|textMultiLine"
+                        android:maxLength="2000"
+                        android:maxLines="4"
+                        android:scrollbars="vertical" />
+                </android.support.design.widget.TextInputLayout>
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+
+                        android:layout_marginTop="6dp"
+                        android:layout_height="wrap_content">
+
+                        <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                            android:id="@+id/profession"
+                            android:layout_width="match_parent"
+                            android:layout_height="20dp"
+                            android:textSize="14sp"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginStart="-5dp"
+                            android:textColorHint="@color/bg_dark"
+                            android:textColor="@color/bg_dark"
+                            android:background="@color/transparent"/>
+                    </android.support.design.widget.TextInputLayout>
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_marginTop="6dp"
+                        android:layout_height="wrap_content">
+
+                        <EditText
+                            android:id="@+id/interest"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Interest"
+                            android:inputType="textCapSentences|textMultiLine"
+                            android:maxLength="2000"
+                            android:maxLines="4"
+                            android:scrollbars="vertical" />
+                    </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="6dp"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/brief"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="brief"
+                        android:inputType="textCapSentences|textMultiLine"
+                        android:maxLength="2000"
+                        android:maxLines="4"
+                        android:scrollbars="vertical" />
+                </android.support.design.widget.TextInputLayout>
+
+            </LinearLayout>
+        </ScrollView>
+
+</RelativeLayout>
