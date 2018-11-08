@@ -1,10 +1,16 @@
 package obi.mapfind.details;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.text.Html;
 import android.util.Log;
@@ -13,6 +19,8 @@ import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +43,7 @@ import java.io.IOException;
 import java.util.List;
 
 import obi.mapfind.BaseActivity;
+import obi.mapfind.MainActivity;
 import obi.mapfind.R;
 
 
@@ -47,28 +56,34 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
     private AutoCompleteTextView mAutocompleteTextView;
     private static final String TAG = "MainActivity";
     private static final int GOOGLE_API_CLIENT_ID = 0;
+    LinearLayout coordinatorLayout;
     private static final LatLngBounds BOUNDS_MOUNTAIN_VIEW = new LatLngBounds(
             new LatLng(37.398160, -122.180831), new LatLng(37.430610, -121.972090));
-    private TextView mNameView; ImageButton clear;
+    ImageButton clear;  String location;     TextView  right_text;
+
+    SharedPreferences sp;
+    SharedPreferences.Editor edit;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        sp = PreferenceManager
+                .getDefaultSharedPreferences(MapsActivity.this);
+        edit = sp.edit();
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-//        initToolbar("Change location","Save");
+       initToolbar("Change location","Save");
         mapFragment.getMapAsync(this);
-//        clear=  findViewById(R.id.clear);
-//        clear.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                mAutocompleteTextView.setText("");
-//            }
-//        });
+        clear=  findViewById(R.id.clear);
+        clear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mAutocompleteTextView.setText("");
+            }
+        });
         mAutocompleteTextView = findViewById(R.id.autoCompleteTextView);
         mAutocompleteTextView.setThreshold(3);
-        mNameView =  findViewById(R.id.name);
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Places.GEO_DATA_API)
                 .enableAutoManage(this, GOOGLE_API_CLIENT_ID, this)
@@ -79,6 +94,26 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
         mPlaceArrayAdapter = new PlaceArrayAdapter(this, android.R.layout.simple_list_item_1,
                 BOUNDS_MOUNTAIN_VIEW, null);
         mAutocompleteTextView.setAdapter(mPlaceArrayAdapter);
+        coordinatorLayout = findViewById(R.id
+                .layouts);
+        right_text= findViewById(R.id.right_text);
+        right_text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!isOnline(MapsActivity.this)){
+                    ifconnection(coordinatorLayout,"No internet connection");
+                    return;
+                }
+
+                edit.putString("address", mAutocompleteTextView.getText().toString());
+                edit.apply();
+
+                Intent uo = new Intent(getApplicationContext(), MainActivity.class);
+                finish();
+                startActivity(uo);
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+            }
+        });
     }
     private AdapterView.OnItemClickListener mAutocompleteClickListener
             = new AdapterView.OnItemClickListener() {
@@ -92,6 +127,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
                     .getPlaceById(mGoogleApiClient, placeId);
             placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
             Log.i(TAG, "Fetching details for ID: " + item.placeId);
+
+            Log.i("one ", String.valueOf(item.placeId));
 
         }
     };
@@ -108,8 +145,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
             final Place place = places.get(0);
             CharSequence attributions = places.getAttributions();
 
-            mNameView.setText(Html.fromHtml(place.getAddress() + ""));
-            onMapSearch(String.valueOf(Html.fromHtml(place.getAddress() + "")));
+
+           onMapSearch(mAutocompleteTextView.getText().toString());
 
         }
     };
@@ -125,9 +162,23 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
                 e.printStackTrace();
             }
             Address address = addressList.get(0);
-            LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
-            mMap.addMarker(new MarkerOptions().position(latLng).title("Marker"));
-            mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+            mMap.setMaxZoomPreference(9);
+           // LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
+        //    Log.i("two ", String.valueOf(latLng));
+           // mMap.addMarker(new MarkerOptions().position(latLng).title("Marker"));
+            //mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+
+            // Add a marker in Sydney and move the camera
+            LatLng sydney = new LatLng(address.getLatitude(),  address.getLongitude());
+            mMap.addMarker(new MarkerOptions().position(sydney).title("Kathmandu, Nepal"));
+
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                    PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+            mMap.setMyLocationEnabled(true);
         }
     }
     @Override
@@ -157,26 +208,42 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
 
     }
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
 
-    }
 
     @Override
     public void onPointerCaptureChanged(boolean hasCapture) {
 
     }
 
-//    @Override
-//    public void onMapReady(GoogleMap googleMap) {
-//        mMap = googleMap;
-//        // Add a marker in Sydney and move the camera
-//        LatLng sydney = new LatLng(27.746974, 85.301582);
-//        mMap.addMarker(new MarkerOptions().position(sydney).title("Kathmandu, Nepal"));
-//        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            return;
-//        }
-//        mMap.setMyLocationEnabled(true);
-//    }
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+        List<Address> addressList = null;
+        Intent in = getIntent();
+
+        if(in.hasExtra("address")){
+           location=base_address();
+        }else{
+            location="Nigeria";
+        }
+        if (location != null || !location.equals("")) {
+            Geocoder geocoder = new Geocoder(this);
+            try {
+                addressList = geocoder.getFromLocationName(location, 1);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+            Address address = addressList.get(0);
+
+        // Add a marker in Sydney and move the camera
+        LatLng sydney = new LatLng(address.getLatitude(),  address.getLongitude());
+        mMap.addMarker(new MarkerOptions().position(sydney).title("Africa,Nigeria"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
+    }
 }
