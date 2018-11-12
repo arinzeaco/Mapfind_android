@@ -2,6 +2,7 @@ package obi.mapfind.details;
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
@@ -26,11 +27,24 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import obi.mapfind.BaseActivity;
+import obi.mapfind.Constant;
+import obi.mapfind.MainActivity;
 import obi.mapfind.R;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 
 public class Register extends BaseActivity implements
@@ -49,8 +63,10 @@ public class Register extends BaseActivity implements
     private FirebaseAuth.AuthStateListener mAuthListener;
     private DatabaseReference myRef;
     private CoordinatorLayout coordinatorLayout;
+    SharedPreferences sp;
+    SharedPreferences.Editor edit;
+    FirebaseUser user;
 
-// ...
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +124,8 @@ public class Register extends BaseActivity implements
                     Toast.makeText(getApplicationContext(), "Password too short, enter minimum 6 characters!", Toast.LENGTH_SHORT).show();
                     return;
                 }
-             yes(email.getText().toString(),pass.getText().toString());
+
+                Register_email(email.getText().toString(),pass.getText().toString());
             }
         });
 
@@ -142,7 +159,89 @@ public class Register extends BaseActivity implements
         };
     }
 
+    public void login_mysql(String userid) {
+        String full_name=  firstname.getText().toString()+" "+ lastname.getText().toString();
+        OkHttpClient client = new OkHttpClient();
+        RequestBody body = new FormBody.Builder()
+                .add("u_id", userid)
+                .add("name", full_name)
+                .add("email", email.getText().toString())
+                .add("avatars","")
+                .build();
+        Request request = new Request.Builder().url(Constant.ipadress+"check_login.php").post(body).build();
+        // Request request = new Request.Builder().url("http://10.0.2.2/better/charticon.php").post(body).build();
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
 
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Register.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+            ifconnection(coordinatorLayout,"Registration failed");
+                    return;
+                    }}
+                );
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                final String myResponse = response.body().string();
+
+                Register.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        JSONObject jso;
+                        try {
+                            jso = new JSONObject(myResponse);
+
+
+                            if (jso.getString("status").contentEquals("1")) {
+
+                                JSONObject details = jso.getJSONObject("data");
+                                String brief = details.getString("brief");
+                                String profession = details.getString("profession");
+                                String email = details.getString("email");
+                                String interest = details.getString("interest");
+                                String name = details.getString("name");
+                                String avatar = details.getString("avatar");
+                                String phone = details.getString("phone");
+                                String address = details.getString("address");
+
+                                edit.putString("loggedin", "yes");
+                                edit.putString("u_id", user.getUid());
+                                edit.putString("email", email);
+                                edit.putString("name", name);
+                                edit.putString("profession", profession);
+                                edit.putString("interest", interest);
+                                edit.putString("brief", brief);
+                                edit.putString("avatar",avatar);
+                                edit.putString("phone", phone);
+                                edit.putString("address",address);
+                                edit.putString("phone", phone);
+
+                                edit.apply();
+
+                                Intent uo = new Intent(getApplicationContext(), MainActivity.class);
+                                finish();
+                                startActivity(uo);
+                                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                            }else{
+                                ifconnection(coordinatorLayout,"Login fail try again later");
+                                return;
+
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }}
+                );
+            }
+        });
+    }
     public boolean isEmailValid(String email) {
 
 
@@ -156,8 +255,8 @@ public class Register extends BaseActivity implements
         }
         return false;
     }
-public void  yes(String emaill, String password){
-    mAuth.createUserWithEmailAndPassword(emaill,password)
+public void  Register_email(String email, String password){
+    mAuth.createUserWithEmailAndPassword(email,password)
             .
 
     addOnCompleteListener(this,new OnCompleteListener<AuthResult>() {
@@ -169,19 +268,15 @@ public void  yes(String emaill, String password){
                 Log.d(TAG, "createUserWithEmail:success");
                 FirebaseUser user = mAuth.getCurrentUser();
                 userID = user.getUid();
-              String full_name=  lastname.getText().toString()+" "+ firstname.getText().toString();
-                UserInformation userInformation = new UserInformation(email.getText().toString(),full_name,"","","");
-                myRef.child("users").child(userID).setValue(userInformation);
-                Toast.makeText(Register.this, "Verify your account and Login.",
-                        Toast.LENGTH_SHORT).show();
+                login_mysql(userID);
+                ifconnection(coordinatorLayout,"Check your email to verify");
                 Intent intent = new Intent(Register.this, Login.class);
                 startActivity(intent);
 
             } else {
                 // If sign in fails, display a message to the user.
                 Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                Toast.makeText(Register.this, "Sorry there was an error in registration",
-                        Toast.LENGTH_SHORT).show();
+                ifconnection(coordinatorLayout,"Register fail try again later");
 
             }
 

@@ -1,27 +1,47 @@
 package obi.mapfind.details;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.content.FileProvider;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.squareup.picasso.Picasso;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Console;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Random;
+
 import obi.mapfind.BaseActivity;
 import obi.mapfind.CircleTransform;
 import obi.mapfind.Constant;
@@ -30,6 +50,8 @@ import obi.mapfind.R;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -43,11 +65,14 @@ public class Profile extends BaseActivity {
     String urll; ImageView pro;
     TextView  right_text;
     SharedPreferences sp;
+    Bitmap bitmap;  BitmapDrawable background;
     RelativeLayout coordinatorLayout;
     SharedPreferences.Editor edit;
     private SearchableSpinner profession;
     private ArrayAdapter professionAdapter;
-
+    Button change_avatar;  String userChoosenTask;
+    String mCurrentPhotoPath;
+    static final int REQUEST_TAKE_PHOTO = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,17 +84,109 @@ public class Profile extends BaseActivity {
         Profile_data();
         initToolbar("Profile","Save");
         right_text= findViewById(R.id.right_text);
-        right_text.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!isOnline(Profile.this)){
-                    ifconnection(coordinatorLayout,"No internet connection");
-                    return;
+        right_text.setOnClickListener(v -> {
+            if(!isOnline(Profile.this)){
+                ifconnection(coordinatorLayout,"No internet connection");
+                return;
+            }
+            update_details();
+        });
+        change_avatar= findViewById(R.id.change_avatar);
+        change_avatar.setOnClickListener(v -> selectImage());
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // handle result of CropImageActivity
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                bitmap = null;
+                try {
+                    bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), result.getUri());
+                    background = new BitmapDrawable(bitmap);
+                    //dispatchTakePictureIntent();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                update_details();
+               // saveImage(bitmap);
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Toast.makeText(this, "Cropping failed: " + result.getError(), Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+    private void selectImage() {
+        final CharSequence[] items = { "Change Image","Remove Image", "View Image",
+                "Cancel" };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(Profile.this);
+        builder.setTitle("Add Photo!");
+        builder.setItems(items, (dialog, item) -> {
+            boolean result= Utility.checkPermission(Profile.this);
+
+            if (items[item].equals("Change Image")) {
+                userChoosenTask ="Take Photo";
+                if(result)
+                    croper();
+            } else if (items[item].equals("Remove Image")) {
+                if(result)
+                    removeimage();
+            } else if (items[item].equals("Cancel")) {
+                dialog.dismiss();
+            }else if (items[item].equals("View Image")){
+                //  zoomer(this, avatar, "link", group_name, null);
             }
         });
+        builder.show();
     }
+    private void removeimage() {
+        //  try {
+//            Form form = new Form()
+//                    .add("group_id", group_id);
+//            Bridge.post(Request.api +"groups/image_delete")
+//                    .body(form)
+//                    .asString((response, object, e) -> {
+//                        if (e == null && object != null){
+//                            JSONObject jso;
+//                            try {
+//                                jso = new JSONObject(object);
+//
+//                                if (jso.getString("status").contentEquals("1") ) {
+//                                    group_image.setImageResource(R.drawable.group_default_dp);
+//
+//                                    List<Chat> membe  = Chat.find(Chat.class, "GROUP_ID = ?",
+//                                            String.valueOf(group_id));
+//                                    membe.get(0).avatar="";
+//                                    membe.get(0).save();
+//                                    Toast.makeText(this, "Group image removed " , Toast.LENGTH_LONG).show();
+//                                }
+//                                if (jso.getString("status").contentEquals("0") ) {
+//                                    Toast.makeText(this, "Failed to removed image " , Toast.LENGTH_LONG).show();
+//                                    return;
+//                                }
+//                                mAdapter.notifyDataSetChanged();
+//                            }
+//                            catch (JSONException e1) {
+//                                e1.printStackTrace();
+//                            }
+//
+//                        }
+//                    });
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+    }
+
+    public void croper(){
+        CropImage.activity()
+                .setGuidelines(CropImageView.Guidelines.ON)
+                .setActivityTitle("")
+                .setCropShape(CropImageView.CropShape.RECTANGLE)
+                .setCropMenuCropButtonTitle("Done")
+                .setRequestedSize(400, 400)
+                .setCropMenuCropButtonIcon(R.drawable.arrow)
+                .start(Profile.this);
+    }
+
 
     public void Profile_data(){
         coordinatorLayout = findViewById(R.id
@@ -80,7 +197,7 @@ public class Profile extends BaseActivity {
         phone= findViewById(R.id.phone);
         address = findViewById(R.id.address);
         profession = findViewById(R.id.profession);
-        interest = findViewById(R.id.interest);
+        //  interest = findViewById(R.id.interest);
         brief = findViewById(R.id.brief);
 
         email.setText(base_email());
@@ -93,14 +210,14 @@ public class Profile extends BaseActivity {
         }else{
             phone.setText(base_phone());
         }
-        phone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent in = new Intent(Profile.this, Change_Phone_Mysql.class);
-                startActivity(in);
-
-            }
-        });
+//        phone.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent in = new Intent(Profile.this, Change_Phone_Mysql.class);
+//                startActivity(in);
+//
+//            }
+//        });
         if(in.hasExtra("address")){
             address.setText(b.getString("address"));
         }else{
@@ -116,7 +233,7 @@ public class Profile extends BaseActivity {
         });
 
 //        profession.setText(base_profession());
-        interest.setText(base_interest());
+//        interest.setText(base_interest());
         brief.setText(base_brief());
         professionAdapter = new ArrayAdapter<>(Profile.this, android.R.layout.simple_spinner_dropdown_item, Constant.professionlist);
         profession.setAdapter(professionAdapter);
@@ -151,10 +268,11 @@ public class Profile extends BaseActivity {
         RequestBody body = new FormBody.Builder()
                 .add("u_id", base_u_id())
                 .add("name", name.getText().toString())
-                .add("profession", base_profession())
-                .add("brief",base_brief())
+                .add("profession",profession.toString())
+                .add("brief",brief.getText().toString())
                 .add("interest",base_interest())
                 .add("phone",base_phone())
+                .add("address",address.getText().toString())
                 .build();
         Request request = new Request.Builder().url(Constant.ipadress+"update.php").post(body).build();
         Call call = client.newCall(request);
@@ -227,6 +345,116 @@ public class Profile extends BaseActivity {
                 );
             }
         });
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case Utility.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
+
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    croper();
+                } else {
+                    //code for deny
+                }
+                break;
+        }
+    }
+
+    public void gets(File imagepath){
+
+        OkHttpClient client = new OkHttpClient();
+        RequestBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("u_id",base_u_id())
+                .addFormDataPart("image", "yes",
+                        RequestBody.create(MediaType.parse("image/*jpg"), imagepath))
+                .build();
+
+        Request request = new Request.Builder().url(Constant.ipadress+"update_avatar.php")
+                .post(requestBody)
+                .build();
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Profile.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ifconnection(coordinatorLayout,"Failed to change image");
+
+                    }}
+                );
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                final String myResponse = response.body().string();
+                Log.i( "response",myResponse );
+                Profile.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), myResponse,
+                                Toast.LENGTH_SHORT).show();
+                        JSONObject jso;
+                        try {
+                            jso = new JSONObject(myResponse);
+
+
+                            if (jso.getString("status").contentEquals("1")) {
+
+                                edit.putString("avatar", jso.getString("data"));
+                                edit.apply();
+
+                                if (loggedin().contentEquals("yes")) {
+                                    if (!(jso.getString("data").contentEquals(""))) {
+                                        Picasso.with(getApplicationContext())
+                                                .load(jso.getString("data"))
+                                                .placeholder(R.drawable.placeholder)
+                                                .error(R.drawable.error)
+                                                .resize(150, 150)
+                                                .transform(new CircleTransform())
+                                                .into(pro);
+                                    }
+
+                                }
+
+                            }else{
+                                ifconnection(coordinatorLayout,"Login fail try aganin later");
+                                return;
+
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }}
+                );
+            }
+        });
+    }
+
+    public void saveImage(Bitmap bmp) {
+        String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString();
+        File myDir = new File(root + "/saved_images_1");
+        myDir.mkdirs();
+        Random generator = new Random();
+        int n = 10000;
+        n = generator.nextInt(n);
+        String fname = "Image-" + n + ".jpg";
+        File file = new File(myDir, fname);
+        if (file.exists())
+            file.delete();
+        try {
+            FileOutputStream out = new FileOutputStream(file);
+            bmp.compress(Bitmap.CompressFormat.PNG, 100, out);
+            out.flush();
+            out.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     @Override
     public void onBackPressed() {

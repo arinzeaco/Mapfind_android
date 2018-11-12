@@ -70,6 +70,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
         sp = PreferenceManager
                 .getDefaultSharedPreferences(MapsActivity.this);
         edit = sp.edit();
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -83,6 +84,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
             }
         });
         mAutocompleteTextView = findViewById(R.id.autoCompleteTextView);
+        mAutocompleteTextView.setText(base_address());
         mAutocompleteTextView.setThreshold(3);
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Places.GEO_DATA_API)
@@ -108,7 +110,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
                 edit.putString("address", mAutocompleteTextView.getText().toString());
                 edit.apply();
 
-                Intent uo = new Intent(getApplicationContext(), MainActivity.class);
+                Intent uo = new Intent(getApplicationContext(), Profile.class);
                 finish();
                 startActivity(uo);
                 overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
@@ -151,6 +153,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
         }
     };
     public void onMapSearch(String location) {
+        mMap.clear();
         List<Address> addressList = null;
 
         if (location != null || !location.equals("")) {
@@ -172,7 +175,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
             LatLng sydney = new LatLng(address.getLatitude(),  address.getLongitude());
             mMap.addMarker(new MarkerOptions().position(sydney).title("Kathmandu, Nepal"));
 
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney,4));
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
                     PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED) {
@@ -219,14 +222,14 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         List<Address> addressList = null;
-        Intent in = getIntent();
 
-        if(in.hasExtra("address")){
+        if(!mAutocompleteTextView.getText().toString().isEmpty()){
            location=base_address();
         }else{
             location="Nigeria";
         }
-        if (location != null || !location.equals("")) {
+
+        if ( !mAutocompleteTextView.getText().toString().isEmpty()) {
             Geocoder geocoder = new Geocoder(this);
             try {
                 addressList = geocoder.getFromLocationName(location, 1);
@@ -240,7 +243,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(address.getLatitude(),  address.getLongitude());
         mMap.addMarker(new MarkerOptions().position(sydney).title("Africa,Nigeria"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney,4));
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }

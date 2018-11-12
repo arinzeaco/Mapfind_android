@@ -71,6 +71,14 @@ public class BaseActivity extends FragmentActivity {
         sp = PreferenceManager.getDefaultSharedPreferences(BaseActivity.this);
         return sp.getString("phone", "");
     }
+    public String  base_longitude(){
+        sp = PreferenceManager.getDefaultSharedPreferences(BaseActivity.this);
+        return sp.getString("longitude", "");
+    }
+    public String  base_latitude(){
+        sp = PreferenceManager.getDefaultSharedPreferences(BaseActivity.this);
+        return sp.getString("latitude", "");
+    }
     public String  base_profession(){
         sp = PreferenceManager.getDefaultSharedPreferences(BaseActivity.this);
         return sp.getString("profession", "");

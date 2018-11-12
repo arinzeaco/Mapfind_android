@@ -234,22 +234,6 @@ public class Login extends BaseActivity implements
 
         });
     }
-//    public void theRef(){
-//
-//        myRef.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                // This method is called once with the initial value and again
-//                // whenever data at this location is updated.
-//                showData(dataSnapshot);
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        });
-//    }
   public void login_mysql() {
     OkHttpClient client = new OkHttpClient();
     RequestBody body = new FormBody.Builder()
@@ -298,6 +282,8 @@ public class Login extends BaseActivity implements
                             String avatar = details.getString("avatar");
                             String phone = details.getString("phone");
                             String address = details.getString("address");
+                            String longitude = details.getString("longitude");
+                            String latitude = details.getString("longitude");
 
                             edit.putString("loggedin", "yes");
                             edit.putString("u_id", user.getUid());
@@ -309,8 +295,8 @@ public class Login extends BaseActivity implements
                             edit.putString("avatar",avatar);
                             edit.putString("phone", phone);
                             edit.putString("address",address);
-                            edit.putString("phone", phone);
-
+                            edit.putString("longitude",longitude);
+                            edit.putString("latitude", latitude);
                             edit.apply();
 
                             Intent uo = new Intent(getApplicationContext(), MainActivity.class);

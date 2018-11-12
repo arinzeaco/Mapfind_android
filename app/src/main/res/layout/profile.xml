@@ -45,13 +45,14 @@
                         android:contentDescription="TODO" />
 
                     <Button
-                        android:id="@+id/button"
+                        android:id="@+id/change_avatar"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:layout_marginEnd="14dp"
-                        android:text="Change Image" />
+                        android:text="Change Image"
+                        android:textSize="12sp" />
                 </RelativeLayout>
 
 
@@ -142,21 +143,21 @@
                             android:background="@color/transparent"/>
                     </android.support.design.widget.TextInputLayout>
 
-                    <android.support.design.widget.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_marginTop="6dp"
-                        android:layout_height="wrap_content">
+                    <!--<android.support.design.widget.TextInputLayout-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_marginTop="6dp"-->
+                        <!--android:layout_height="wrap_content">-->
 
-                        <EditText
-                            android:id="@+id/interest"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Interest"
-                            android:inputType="textCapSentences|textMultiLine"
-                            android:maxLength="2000"
-                            android:maxLines="4"
-                            android:scrollbars="vertical" />
-                    </android.support.design.widget.TextInputLayout>
+                        <!--<EditText-->
+                            <!--android:id="@+id/interest"-->
+                            <!--android:layout_width="match_parent"-->
+                            <!--android:layout_height="wrap_content"-->
+                            <!--android:hint="Interest"-->
+                            <!--android:inputType="textCapSentences|textMultiLine"-->
+                            <!--android:maxLength="2000"-->
+                            <!--android:maxLines="4"-->
+                            <!--android:scrollbars="vertical" />-->
+                    <!--</android.support.design.widget.TextInputLayout>-->
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"

@@ -5,9 +5,11 @@ import android.app.Dialog;
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
@@ -25,11 +27,23 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.concurrent.Executor;
 
 import obi.mapfind.BaseActivity;
+import obi.mapfind.Constant;
 import obi.mapfind.MainActivity;
 import obi.mapfind.R;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 import static android.support.constraint.Constraints.TAG;
 
@@ -46,11 +60,15 @@ class OTPDialogNewNumber extends Dialog {
     String numberwithout;
     BaseActivity base;
     private FirebaseAuth mAuth;
-
+    SharedPreferences sp;
+    SharedPreferences.Editor edit;
     public OTPDialogNewNumber(@NonNull final Context context) {
         super(context);
         this.context = context;
         base= new BaseActivity();
+        sp = PreferenceManager
+                .getDefaultSharedPreferences(context);
+        edit = sp.edit();
     /*-----------------------------------------------------------------
      |     CONFIGURE THE APPEARANCE OF THE DIALOG
      *-----------------------------------------------------------------*/
@@ -106,14 +124,7 @@ class OTPDialogNewNumber extends Dialog {
                             FirebaseUser user = task.getResult().getUser();
                             // [START_EXCLUDE]
 
-                            Bundle b = new Bundle();
-
-
-                            b.putString("newphone",numberwithout);
-
-                            Intent in = new Intent(context, Change_Phone.class);
-                            in.putExtras(b);
-                            context.startActivity(in);
+                         change_number_mysql();
 
                         } else {
                             // Sign in failed, display a message and update the UI
@@ -128,6 +139,65 @@ class OTPDialogNewNumber extends Dialog {
                 });
     }
 
+    public void change_number_mysql() {
+        OkHttpClient client = new OkHttpClient();
+        RequestBody body = new FormBody.Builder()
+                .add("u_id", base.base_u_id())
+                .add("name", number)
+                .build();
+        Request request = new Request.Builder().url(Constant.ipadress + "check_phone_number.php").post(body).build();
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                getOwnerActivity().runOnUiThread(new Runnable() {
+                                             @Override
+                                             public void run() {
+                                                 Toast.makeText(context, "Action Failed",
+                                                         Toast.LENGTH_SHORT).show();
+                                             }
+                                         }
+                );
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                final String myResponse = response.body().string();
+
+                getOwnerActivity().runOnUiThread(new Runnable() {
+                                             @Override
+                                             public void run() {
+
+                                                 JSONObject jso;
+                                                 try {
+                                                     jso = new JSONObject(myResponse);
+
+
+                                                     if (jso.getString("status").contentEquals("1")) {
+
+                                                         edit.putString("phone", numberwithout);
+                                                         edit.apply();
+                                                         Toast.makeText(context,jso.getString("message")
+                                                                 ,Toast.LENGTH_SHORT).show();
+                                                         Intent uo = new Intent(context, Profile.class);
+                                                         context.startActivity(uo);
+                                                     } else {
+                                                        Toast.makeText(context,"Failed to change number try again later"
+                                                                ,Toast.LENGTH_SHORT).show();
+                                                         return;
+                                                     }
+
+                                                 } catch (JSONException e) {
+                                                     e.printStackTrace();
+                                                 }
+
+                                             }
+                                         }
+                );
+            }
+        });
+    }
     @Override
     public void show() {
         super.show();
