@@ -273,6 +273,8 @@ public class Profile extends BaseActivity {
                 .add("interest",base_interest())
                 .add("phone",base_phone())
                 .add("address",address.getText().toString())
+                .add("latitude",base_latitude())
+                .add("longitude",base_longitude())
                 .build();
         Request request = new Request.Builder().url(Constant.ipadress+"update.php").post(body).build();
         Call call = client.newCall(request);

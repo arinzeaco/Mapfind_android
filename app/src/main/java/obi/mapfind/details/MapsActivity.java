@@ -57,6 +57,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
     private static final String TAG = "MainActivity";
     private static final int GOOGLE_API_CLIENT_ID = 0;
     LinearLayout coordinatorLayout;
+    double lat, lon;
+
     private static final LatLngBounds BOUNDS_MOUNTAIN_VIEW = new LatLngBounds(
             new LatLng(37.398160, -122.180831), new LatLng(37.430610, -121.972090));
     ImageButton clear;  String location;     TextView  right_text;
@@ -108,6 +110,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
                 }
 
                 edit.putString("address", mAutocompleteTextView.getText().toString());
+                edit.putString("longitude", String.valueOf(lon));
+                edit.putString("latitude", String.valueOf(lat));
                 edit.apply();
 
                 Intent uo = new Intent(getApplicationContext(), Profile.class);
@@ -172,8 +176,10 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
             //mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
 
             // Add a marker in Sydney and move the camera
-            LatLng sydney = new LatLng(address.getLatitude(),  address.getLongitude());
-            mMap.addMarker(new MarkerOptions().position(sydney).title("Kathmandu, Nepal"));
+          lat = address.getLatitude();
+           lon = address.getLongitude();
+            LatLng sydney = new LatLng(lat, lon);
+            mMap.addMarker(new MarkerOptions().position(sydney).title("aut"));
 
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney,4));
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=

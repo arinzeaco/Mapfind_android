@@ -6,8 +6,8 @@ package obi.mapfind;
 
 public class Constant {
 //   public static String ipadress="http://192.168.0.142/maphpandroid/";
-//   public static String ipadress="http://192.168.1.102/maphpandroid/";
-     public static String ipadress="http://192.168.4.104/maphpandroid/";
+  public static String ipadress="http://192.168.1.102/maphpandroid/";
+//     public static String ipadress="http://192.168.4.104/maphpandroid/";
 
     public static String[] professionlist = new String[]{
             "accountant",

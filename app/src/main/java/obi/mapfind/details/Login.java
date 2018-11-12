@@ -283,7 +283,7 @@ public class Login extends BaseActivity implements
                             String phone = details.getString("phone");
                             String address = details.getString("address");
                             String longitude = details.getString("longitude");
-                            String latitude = details.getString("longitude");
+                            String latitude = details.getString("latitude");
 
                             edit.putString("loggedin", "yes");
                             edit.putString("u_id", user.getUid());
