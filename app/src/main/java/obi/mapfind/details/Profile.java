@@ -32,12 +32,12 @@ import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
-import java.io.Console;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -71,8 +71,6 @@ public class Profile extends BaseActivity {
     private SearchableSpinner profession;
     private ArrayAdapter professionAdapter;
     Button change_avatar;  String userChoosenTask;
-    String mCurrentPhotoPath;
-    static final int REQUEST_TAKE_PHOTO = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -232,17 +230,19 @@ public class Profile extends BaseActivity {
             }
         });
 
-//        profession.setText(base_profession());
-//        interest.setText(base_interest());
         brief.setText(base_brief());
-        professionAdapter = new ArrayAdapter<>(Profile.this, android.R.layout.simple_spinner_dropdown_item, Constant.professionlist);
+        String[] modifiedArray = Arrays.copyOfRange(Constant.professionlist, 1, Constant.professionlist.length);
+        professionAdapter = new ArrayAdapter<>(Profile.this, android.R.layout.simple_spinner_dropdown_item, modifiedArray);
         profession.setAdapter(professionAdapter);
+
+        int pos = new ArrayList<String>(Arrays.asList(Constant.professionlist)).indexOf(base_profession());
+
+        profession.setSelection(pos);
         if(!base_avatar().isEmpty() && !base_avatar().contentEquals("")) {
             if (isOnline(getApplicationContext())) {
                 Picasso.with(getApplicationContext())
                         .load(base_avatar())
                         .placeholder(R.drawable.placeholder)
-
                         .resize(120, 120)
                         .transform(new CircleTransform())
                         .into(pro);
@@ -268,7 +268,7 @@ public class Profile extends BaseActivity {
         RequestBody body = new FormBody.Builder()
                 .add("u_id", base_u_id())
                 .add("name", name.getText().toString())
-                .add("profession",profession.toString())
+                .add("profession",profession.getSelectedItem().toString())
                 .add("brief",brief.getText().toString())
                 .add("interest",base_interest())
                 .add("phone",base_phone())

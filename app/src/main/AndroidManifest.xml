@@ -68,6 +68,15 @@
         <activity
             android:name=".details.MapsActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".Settings"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".home.Find"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Other_Profile"
+            android:screenOrientation="portrait" />
 
     </application>
 

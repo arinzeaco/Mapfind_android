@@ -19,8 +19,8 @@ import obi.mapfind.details.Login;
 import obi.mapfind.details.Profile;
 import obi.mapfind.fragment.Fragment_about;
 import obi.mapfind.fragment.Fragment_contacts;
-import obi.mapfind.fragment.Fragment_find;
 import obi.mapfind.fragment.Fragment_invite;
+import obi.mapfind.home.Find;
 
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -105,8 +105,11 @@ public class MainActivity extends BaseActivity
         //initializing the fragment object which is selected
         switch (itemId) {
             case R.id.find:
-                fragment = new Fragment_find();
-                initToolbar("Find","");
+//                fragment = new Fragment_find();
+//                initToolbar("Find","");
+                Intent inn = new Intent(MainActivity.this, Find.class);
+                startActivity(inn);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 break;
             case R.id.contacts:
                 fragment = new Fragment_contacts();
@@ -117,8 +120,11 @@ public class MainActivity extends BaseActivity
                 initToolbar("Invite","");
                 break;
             case R.id.settings:
-                fragment = new Fragment_contacts();
-                initToolbar("Settings","");
+                Intent in = new Intent(MainActivity.this, Settings.class);
+                startActivity(in);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+//                fragment = new Fragment_settings();
+//                initToolbar("Settings","");
                 break;
             case R.id.about:
                 fragment = new Fragment_about();

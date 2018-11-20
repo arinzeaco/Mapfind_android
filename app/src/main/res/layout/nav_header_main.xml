@@ -15,9 +15,9 @@
         android:id="@+id/propic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:contentDescription="@string/nav_header_desc"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:layout_gravity="center_horizontal"
         app:srcCompat="@mipmap/ic_launcher_round" />
 
     <TextView
