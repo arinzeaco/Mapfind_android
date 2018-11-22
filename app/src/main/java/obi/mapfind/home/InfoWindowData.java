@@ -5,6 +5,16 @@ public class InfoWindowData {
     private String address;
     private String phone;
     private String name;
+    private String userid;
+
+    public String getUserid() {
+        return userid;
+    }
+
+    public void setUserid(String userid) {
+        this.userid = userid;
+    }
+
 
     public String getImage() {
         return image;

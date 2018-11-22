@@ -1,6 +1,7 @@
 package obi.mapfind.home;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -34,6 +35,7 @@ import java.io.IOException;
 
 import obi.mapfind.BaseActivity;
 import obi.mapfind.Constant;
+import obi.mapfind.Other_Profile;
 import obi.mapfind.R;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -43,7 +45,9 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class Find extends BaseActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener,
+public class Find extends BaseActivity implements
+        OnMapReadyCallback,GoogleMap.OnInfoWindowClickListener,
+        GoogleApiClient.OnConnectionFailedListener,
         GoogleApiClient.ConnectionCallbacks{
 
     private GoogleMap mMap;
@@ -53,7 +57,7 @@ public class Find extends BaseActivity implements OnMapReadyCallback, GoogleApiC
     LinearLayout coordinatorLayout;
     double lat, lon;
 
-    ImageButton clear;  String location;     TextView right_text;
+
 
     SharedPreferences sp;
     SharedPreferences.Editor edit;
@@ -140,8 +144,8 @@ public class Find extends BaseActivity implements OnMapReadyCallback, GoogleApiC
                 .add("longitude","80.5")
                 .add("latitude","40.5")
                 .build();
+
         Request request = new Request.Builder().url(Constant.ipadress+"all_users.php").post(body).build();
-        // Request request = new Request.Builder().url("http://10.0.2.2/better/charticon.php").post(body).build();
         Call call = client.newCall(request);
         call.enqueue(new Callback() {
 
@@ -176,14 +180,14 @@ public class Find extends BaseActivity implements OnMapReadyCallback, GoogleApiC
                                                             JSONArray details = jso.getJSONArray("data");
                                                             for (int i = 0; i < details.length(); i++) {
 
-                                                                // String brief = details.getString("brief");
+                                                               String userid = details.getJSONObject(i).getString("u_id");
                                                                 String profession = details.getJSONObject(i).getString("profession");
 //                                String email = details.getString("email");
 //                                String interest = details.getString("interest");
                                                                 String name =details.getJSONObject(i).getString("name");
-//                                String avatar = details.getString("avatar");
-//                                String phone = details.getString("phone");
-                                                                //        String address = details.getString("address");
+                                                                String avatar = details.getJSONObject(i).getString("avatar");
+                                                                String phone = details.getJSONObject(i).getString("phone");
+                                                                String address = details.getJSONObject(i).getString("address");
                                                                 Double longitude =details.getJSONObject(i).getDouble("longitude");
                                                                 Double latitude =details.getJSONObject(i).getDouble("latitude");
 
@@ -193,15 +197,14 @@ public class Find extends BaseActivity implements OnMapReadyCallback, GoogleApiC
                                                                 MarkerOptions markerOptions = new MarkerOptions();
                                                                 markerOptions.position(sydney)
                                                                         .title(name)
-                                                                        .snippet("Snoqualmie Falls is located 25 miles east of Seattle.")
+                                                                        .snippet("Address:"+address)
                                                                         .icon(BitmapDescriptorFactory.defaultMarker( BitmapDescriptorFactory.HUE_BLUE));
 
-
                                                                 InfoWindowData info = new InfoWindowData();
-                                                                info.setImage("snowqualmie");
-                                                                info.setAddress("Hotel : excellent hotels available");
-                                                                info.setPhone("Food : all types of restaurants available");
-                                                                info.setName("Reach the site by bus, car and train.");
+                                                               // info.setImage("snowqualmie");
+                                                                info.setPhone("Phone:"+ phone);
+                                                                info.setImage(avatar);
+                                                                info.setUserid(userid);
 
                                                                 CustomInfoWindowGoogleMap customInfoWindow = new CustomInfoWindowGoogleMap(Find.this);
                                                                 mMap.setInfoWindowAdapter(customInfoWindow);
@@ -250,4 +253,13 @@ public class Find extends BaseActivity implements OnMapReadyCallback, GoogleApiC
 //                                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        Toast.makeText(Find.this,"fddf",Toast.LENGTH_SHORT).show();
+        Bundle b = new Bundle();
+      //  b.putString("userid", infoWindowData.getUserid());
+        Intent in = new Intent(Find.this, Other_Profile.class);
+        in.putExtras(b);
+        startActivity(in);
+    }
 }

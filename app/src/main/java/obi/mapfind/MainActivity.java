@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+
 import com.squareup.picasso.Picasso;
 
 import obi.mapfind.details.Login;
@@ -66,7 +67,7 @@ public class MainActivity extends BaseActivity
         super.onResume();
         if (loggedin().contentEquals("yes")) {
             if (!(base_avatar().contentEquals(""))) {
-                Picasso.with(getApplicationContext())
+                Picasso.get()
                         .load(base_avatar())
                         .placeholder(R.drawable.placeholder)
                         .error(R.drawable.error)

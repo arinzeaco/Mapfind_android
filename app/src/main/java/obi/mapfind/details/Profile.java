@@ -240,7 +240,7 @@ public class Profile extends BaseActivity {
         profession.setSelection(pos);
         if(!base_avatar().isEmpty() && !base_avatar().contentEquals("")) {
             if (isOnline(getApplicationContext())) {
-                Picasso.with(getApplicationContext())
+                Picasso .get()
                         .load(base_avatar())
                         .placeholder(R.drawable.placeholder)
                         .resize(120, 120)
@@ -410,7 +410,7 @@ public class Profile extends BaseActivity {
 
                                 if (loggedin().contentEquals("yes")) {
                                     if (!(jso.getString("data").contentEquals(""))) {
-                                        Picasso.with(getApplicationContext())
+                                        Picasso.get()
                                                 .load(jso.getString("data"))
                                                 .placeholder(R.drawable.placeholder)
                                                 .error(R.drawable.error)

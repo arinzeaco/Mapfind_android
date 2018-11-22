@@ -25,12 +25,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:text="Login/Register"
-        android:textColor="@color/bg_dark"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/nav_header_vertical_spacing"
+        android:text="Login/Register"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textColor="@color/bg_dark"
         android:textSize="19sp" />
     <View
         android:layout_width="match_parent"

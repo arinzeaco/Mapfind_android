@@ -28,13 +28,12 @@
             android:focusableInTouchMode="false" />
 
 
-        <ImageButton
-            android:id="@+id/like"
+        <ImageView
+            android:id="@+id/like_icon"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/heart2" />
+            android:layout_centerVertical="true" />
 
     </RelativeLayout>
 

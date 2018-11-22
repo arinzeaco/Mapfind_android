@@ -9,7 +9,6 @@ import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -36,12 +35,12 @@ public class Other_Profile extends BaseActivity {
 
     TextView right_text;
     SharedPreferences sp;   String likevalue;
-    Bitmap bitmap;  BitmapDrawable background;
+    BitmapDrawable background;
     RelativeLayout coordinatorLayout;
     SharedPreferences.Editor edit;
     Button change_avatar;
     Intent in;
-    Bundle b;
+    Bundle b; ImageView like_icon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +51,7 @@ public class Other_Profile extends BaseActivity {
         edit = sp.edit();
         in = getIntent();
         b = in.getExtras();
-        initToolbarimage("");
+        coordinatorLayout =  findViewById(R.id.layouts);
         pro =  findViewById(R.id.propic);
         text_name = findViewById(R.id.name);
         text_email = findViewById(R.id.email);
@@ -61,13 +60,14 @@ public class Other_Profile extends BaseActivity {
         text_profession = findViewById(R.id.profession);
         //  interest = findViewById(R.id.interest);
         text_brief = findViewById(R.id.brief);
+        like_icon =  findViewById(R.id.like_icon);
         if(!isOnline(Other_Profile.this)){
             ifconnection(coordinatorLayout,"No internet connection");
             return;
         }else {
-            update_details();
+            get_details();
         }
-        like.setOnClickListener(new View.OnClickListener() {
+        like_icon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 ////// Add click to like function
@@ -79,11 +79,9 @@ public class Other_Profile extends BaseActivity {
                     ifconnection(coordinatorLayout,"Login before you can like");
                     return;
                 }
-                if (likevalue.contentEquals("yes")) {
+
                     changeLikedValue();
-                } else if (likevalue.contentEquals("no")) {
-                    changeLikedValue();
-                }
+
             }
 
         });
@@ -95,7 +93,7 @@ public class Other_Profile extends BaseActivity {
         RequestBody body = new FormBody.Builder()
                 .add("u_id", base_u_id())
                 .add("liked", likevalue)
-                .add("like_uid",b.getString("userid"))
+                .add("like_uid","6165:3d6e:6c74:b61f:5d5b:e00:9185:8d53/113")
                 .build();
         Request request = new Request.Builder().url(Constant.ipadress+"charticon.php").post(body).build();
         Call call = client.newCall(request);
@@ -121,13 +119,13 @@ public class Other_Profile extends BaseActivity {
                         try {
                             jso = new JSONObject(myResponse);
                             if (jso.getString("status").contentEquals("1")) {
-                                String val= jso.getString("val");
-                                if(val.contentEquals("yes")) {
-                                    likevalue="yes";
-                                    like.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.heart2));
+                                likevalue= jso.getString("val");
+                                if(likevalue.contentEquals("yes")) {
+                                    ifconnection(coordinatorLayout,"liked");
+                                    like_icon.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.heart2));
                                 }else{
-                                    likevalue="no";
-                                    like.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.heart));
+                                    ifconnection(coordinatorLayout,"unliked");
+                                    like_icon.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.heart));
                                 }
 
                             }else {
@@ -143,12 +141,12 @@ public class Other_Profile extends BaseActivity {
         });
 
     }
-    public void update_details() {
+    public void get_details() {
       //  Log.i("name",name.getText().toString());
         OkHttpClient client = new OkHttpClient();
         RequestBody body = new FormBody.Builder()
                 .add("u_id", base_u_id())
-                .add("userid",b.getString("userid"))
+                .add("userid","6165:3d6e:6c74:b61f:5d5b:e00:9185:8d53/113")
                 .build();
         Request request = new Request.Builder().url(Constant.ipadress+"other_profile.php").post(body).build();
         Call call = client.newCall(request);
@@ -179,9 +177,9 @@ public class Other_Profile extends BaseActivity {
 
                             likevalue= jso.getString("liked");
                             if(likevalue.contentEquals("yes")){
-                                like.setImageDrawable( ContextCompat.getDrawable(getApplicationContext(), R.drawable.heart2));
+                                like_icon.setImageDrawable( ContextCompat.getDrawable(getApplicationContext(), R.drawable.heart2));
                             }else if(likevalue.contentEquals("no")){
-                                like.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.heart));
+                                like_icon.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.heart));
                             }
                             if (jso.getString("status").contentEquals("1")) {
                                 JSONObject details = jso.getJSONObject("data");
@@ -195,7 +193,7 @@ public class Other_Profile extends BaseActivity {
                                 String address = details.getString("address");
                                 if(!avatar.contentEquals("")) {
                                     if (isOnline(Other_Profile.this)) {
-                                        Picasso.with(Other_Profile.this)
+                                        Picasso.get()
                                                 .load(avatar)
                                                 .placeholder(R.drawable.placeholder)
                                                 .resize(120, 120)

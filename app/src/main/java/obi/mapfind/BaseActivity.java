@@ -17,6 +17,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import static java.lang.System.out;
@@ -26,24 +27,17 @@ public class BaseActivity extends FragmentActivity {
     SharedPreferences  sp;
     TextView  toolbarTitle, right_text;
     ImageButton backbtn;
-    ImageButton like;
+    ImageView like;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
         super.onCreate(savedInstanceState);
     }
 
-    public void initToolbarimage(String title){
-        toolbarTitle = findViewById(R.id.toolbartitle);
+    public void initToolbarimage(){
         backbtn = findViewById(R.id.backbtn);
         like = findViewById(R.id.like);
-        toolbarTitle.setText(title);
-        backbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+
 
     }
     public void initToolbar(String title, String right_title){
@@ -168,6 +162,7 @@ public class BaseActivity extends FragmentActivity {
             View sbView = snackbar.getView();
             TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
             textView.setTextColor(Color.YELLOW);
+
             snackbar.show();
             return;
         }

@@ -2,13 +2,19 @@ package obi.mapfind.home;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
+import com.squareup.picasso.Picasso;
 
+import obi.mapfind.CircleTransform;
+import obi.mapfind.Other_Profile;
 import obi.mapfind.R;
 import obi.mapfind.home.InfoWindowData;
 
@@ -30,27 +36,40 @@ public class CustomInfoWindowGoogleMap implements GoogleMap.InfoWindowAdapter {
         View view = ((Activity)context).getLayoutInflater()
                 .inflate(R.layout.map_custom_infowindow, null);
 
-        TextView name_tv = view.findViewById(R.id.name);
-        TextView details_tv = view.findViewById(R.id.details);
+        TextView name = view.findViewById(R.id.name);
+        TextView address = view.findViewById(R.id.address);
+        TextView phone = view.findViewById(R.id.phone);
         ImageView img = view.findViewById(R.id.pic);
-
-        TextView hotel_tv = view.findViewById(R.id.hotels);
-        TextView food_tv = view.findViewById(R.id.food);
-        TextView transport_tv = view.findViewById(R.id.transport);
-
-        name_tv.setText(marker.getTitle());
-        details_tv.setText(marker.getSnippet());
+        TextView seemore= view.findViewById(R.id.seemore);
 
         InfoWindowData infoWindowData = (InfoWindowData) marker.getTag();
+        name.setText(marker.getTitle());
+        address.setText(marker.getSnippet());
+      phone.setText(infoWindowData.getPhone());
 
-        int imageId = context.getResources().getIdentifier(infoWindowData.getImage().toLowerCase(),
-                "drawable", context.getPackageName());
-        img.setImageResource(imageId);
-
-        hotel_tv.setText(infoWindowData.getAddress());
-        food_tv.setText(infoWindowData.getPhone());
-        transport_tv.setText(infoWindowData.getName());
-
+            if (!infoWindowData.getImage().contentEquals("")) {
+                Picasso.get()
+                        .load(infoWindowData.getImage())
+                        .placeholder(R.drawable.placeholder)
+                        .error(R.drawable.error)
+                        .resize(150, 150)
+                        .transform(new CircleTransform())
+                        .into(img);
+            }
+       view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context,"fddf",Toast.LENGTH_SHORT).show();
+                Bundle b = new Bundle();
+                b.putString("userid", infoWindowData.getUserid());
+                Intent in = new Intent(context, Other_Profile.class);
+                in.putExtras(b);
+                context.startActivity(in);
+            }
+        });
+//        int imageId = context.getResources().getIdentifier(infoWindowData.getImage().toLowerCase(),
+//                "drawable", context.getPackageName());
+//        img.setImageResource(imageId);
         return view;
     }
 }
