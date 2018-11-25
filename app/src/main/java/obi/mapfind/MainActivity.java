@@ -117,8 +117,10 @@ public class MainActivity extends BaseActivity
                 initToolbar("Contacts","");
                 break;
             case R.id.invite:
-                fragment = new Fragment_invite();
-                initToolbar("Invite","");
+                Intent tweetIntent = new Intent(Intent.ACTION_SEND);
+                tweetIntent.putExtra(Intent.EXTRA_TEXT, Constant.INVITE_MESSAGE);
+                tweetIntent.setType("text/plain");
+                startActivity(tweetIntent);
                 break;
             case R.id.settings:
                 Intent in = new Intent(MainActivity.this, Settings.class);

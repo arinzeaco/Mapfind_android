@@ -46,7 +46,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class Find extends BaseActivity implements
-        OnMapReadyCallback,GoogleMap.OnInfoWindowClickListener,
+        OnMapReadyCallback,
         GoogleApiClient.OnConnectionFailedListener,
         GoogleApiClient.ConnectionCallbacks{
 
@@ -56,7 +56,7 @@ public class Find extends BaseActivity implements
     private static final int GOOGLE_API_CLIENT_ID = 0;
     LinearLayout coordinatorLayout;
     double lat, lon;
-
+    Intent in;
 
 
     SharedPreferences sp;
@@ -68,6 +68,8 @@ public class Find extends BaseActivity implements
         sp = PreferenceManager
                 .getDefaultSharedPreferences(Find.this);
         edit = sp.edit();
+
+        in = getIntent();
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -83,6 +85,7 @@ public class Find extends BaseActivity implements
 
         coordinatorLayout = findViewById(R.id
                 .layouts);
+
 //        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
 //            @Override
 //            public boolean onMarkerClick(Marker marker) {
@@ -135,14 +138,28 @@ public class Find extends BaseActivity implements
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        String profession_set;
+        if(!in.hasExtra("profession_set")){
+            profession_set=sp.getString("profession_set", "");
+        }else{
+            profession_set="any";
+        }
+
+        String meter;
+        if(!in.hasExtra("base_meter")){
+            meter=sp.getString("base_meter", "");
+        }else{
+            meter="5";
+        }
+        Log.i("filter _details",profession_set+meter);
         mMap = googleMap;
         mMap.setMaxZoomPreference(9);
         OkHttpClient client = new OkHttpClient();
         RequestBody body = new FormBody.Builder()
-                .add("profession", "any")
-                .add("distance","5")
-                .add("longitude","80.5")
-                .add("latitude","40.5")
+                .add("profession", profession_set)
+                .add("distance",meter)
+                .add("longitude",base_longitude())
+                .add("latitude",base_latitude())
                 .build();
 
         Request request = new Request.Builder().url(Constant.ipadress+"all_users.php").post(body).build();
@@ -197,7 +214,7 @@ public class Find extends BaseActivity implements
                                                                 MarkerOptions markerOptions = new MarkerOptions();
                                                                 markerOptions.position(sydney)
                                                                         .title(name)
-                                                                        .snippet("Address:"+address)
+                                                                        .snippet(userid)
                                                                         .icon(BitmapDescriptorFactory.defaultMarker( BitmapDescriptorFactory.HUE_BLUE));
 
                                                                 InfoWindowData info = new InfoWindowData();
@@ -205,6 +222,7 @@ public class Find extends BaseActivity implements
                                                                 info.setPhone("Phone:"+ phone);
                                                                 info.setImage(avatar);
                                                                 info.setUserid(userid);
+                                                                info.setAddress(address);
 
                                                                 CustomInfoWindowGoogleMap customInfoWindow = new CustomInfoWindowGoogleMap(Find.this);
                                                                 mMap.setInfoWindowAdapter(customInfoWindow);
@@ -213,6 +231,17 @@ public class Find extends BaseActivity implements
                                                                 m.setTag(info);
                                                                 m.showInfoWindow();
                                                                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney,4));
+                                                                mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                                                                    @Override
+                                                                    public void onInfoWindowClick(Marker marker) {
+                                                                        Bundle b = new Bundle();
+                                                                     //   Toast.makeText(Find.this,marker.getSnippet(),Toast.LENGTH_SHORT).show();
+                                                                        b.putString("userid", marker.getSnippet());
+                                                                        Intent in = new Intent(Find.this, Other_Profile.class);
+                                                                        in.putExtras(b);
+                                                                        startActivity(in);
+                                                                    }
+                                                                });
                                                             }
                                                         }else{
                                                            ifconnection(coordinatorLayout,"Failed to find try again later");
@@ -252,14 +281,8 @@ public class Find extends BaseActivity implements
 //                                startActivity(uo);
 //                                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
+     public void setfilter(){
 
-    @Override
-    public void onInfoWindowClick(Marker marker) {
-        Toast.makeText(Find.this,"fddf",Toast.LENGTH_SHORT).show();
-        Bundle b = new Bundle();
-      //  b.putString("userid", infoWindowData.getUserid());
-        Intent in = new Intent(Find.this, Other_Profile.class);
-        in.putExtras(b);
-        startActivity(in);
-    }
+     }
+
 }

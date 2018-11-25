@@ -44,7 +44,7 @@ public class CustomInfoWindowGoogleMap implements GoogleMap.InfoWindowAdapter {
 
         InfoWindowData infoWindowData = (InfoWindowData) marker.getTag();
         name.setText(marker.getTitle());
-        address.setText(marker.getSnippet());
+        address.setText(infoWindowData.getAddress());
       phone.setText(infoWindowData.getPhone());
 
             if (!infoWindowData.getImage().contentEquals("")) {
@@ -56,20 +56,15 @@ public class CustomInfoWindowGoogleMap implements GoogleMap.InfoWindowAdapter {
                         .transform(new CircleTransform())
                         .into(img);
             }
-       view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(context,"fddf",Toast.LENGTH_SHORT).show();
-                Bundle b = new Bundle();
-                b.putString("userid", infoWindowData.getUserid());
-                Intent in = new Intent(context, Other_Profile.class);
-                in.putExtras(b);
-                context.startActivity(in);
-            }
-        });
-//        int imageId = context.getResources().getIdentifier(infoWindowData.getImage().toLowerCase(),
-//                "drawable", context.getPackageName());
-//        img.setImageResource(imageId);
+//       view.setOnClickListener(v -> {
+//           Toast.makeText(context,"fddf",Toast.LENGTH_SHORT).show();
+//           Bundle b = new Bundle();
+//           b.putString("userid", infoWindowData.getUserid());
+//           Intent in = new Intent(context, Other_Profile.class);
+//           in.putExtras(b);
+//           context.startActivity(in);
+//       });
+
         return view;
     }
 }

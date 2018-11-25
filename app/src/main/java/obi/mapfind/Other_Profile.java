@@ -7,12 +7,14 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -31,7 +33,7 @@ public class Other_Profile extends BaseActivity {
 
     TextView text_name,text_email,text_phone,text_address,
             text_profession ,text_brief;
-    String urll; ImageView pro;
+   ImageView pro;
 
     TextView right_text;
     SharedPreferences sp;   String likevalue;
@@ -93,7 +95,7 @@ public class Other_Profile extends BaseActivity {
         RequestBody body = new FormBody.Builder()
                 .add("u_id", base_u_id())
                 .add("liked", likevalue)
-                .add("like_uid","6165:3d6e:6c74:b61f:5d5b:e00:9185:8d53/113")
+                .add("like_uid",b.getString("userid"))
                 .build();
         Request request = new Request.Builder().url(Constant.ipadress+"charticon.php").post(body).build();
         Call call = client.newCall(request);
@@ -142,11 +144,12 @@ public class Other_Profile extends BaseActivity {
 
     }
     public void get_details() {
-      //  Log.i("name",name.getText().toString());
+     Log.i("name_one","1");
+
         OkHttpClient client = new OkHttpClient();
         RequestBody body = new FormBody.Builder()
                 .add("u_id", base_u_id())
-                .add("userid","6165:3d6e:6c74:b61f:5d5b:e00:9185:8d53/113")
+                .add("userid",b.getString("userid"))
                 .build();
         Request request = new Request.Builder().url(Constant.ipadress+"other_profile.php").post(body).build();
         Call call = client.newCall(request);
@@ -169,7 +172,7 @@ public class Other_Profile extends BaseActivity {
                 Other_Profile.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-
+                        Log.i("nameoone","2");
                         JSONObject jso;
 
                         try {
@@ -182,6 +185,7 @@ public class Other_Profile extends BaseActivity {
                                 like_icon.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.heart));
                             }
                             if (jso.getString("status").contentEquals("1")) {
+                                Log.i("nameoone","3");
                                 JSONObject details = jso.getJSONObject("data");
                                 String brief = details.getString("brief");
                                 String profession = details.getString("profession");
