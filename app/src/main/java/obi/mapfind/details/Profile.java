@@ -1,20 +1,17 @@
 package obi.mapfind.details;
 
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -32,21 +29,21 @@ import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
 import java.util.Random;
 
 import obi.mapfind.BaseActivity;
 import obi.mapfind.CircleTransform;
 import obi.mapfind.Constant;
 import obi.mapfind.MainActivity;
+import obi.mapfind.Other_Profile;
 import obi.mapfind.R;
+import obi.mapfind.home.Find;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -72,6 +69,7 @@ public class Profile extends BaseActivity {
     private ArrayAdapter professionAdapter;
     Button change_avatar;  String userChoosenTask;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,6 +89,12 @@ public class Profile extends BaseActivity {
         });
         change_avatar= findViewById(R.id.change_avatar);
         change_avatar.setOnClickListener(v -> selectImage());
+        pro.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectImage();
+            }
+        });
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -131,47 +135,74 @@ public class Profile extends BaseActivity {
             } else if (items[item].equals("Cancel")) {
                 dialog.dismiss();
             }else if (items[item].equals("View Image")){
+
+                Bundle b = new Bundle();
+                //   Toast.makeText(Find.this,marker.getSnippet(),Toast.LENGTH_SHORT).show();
+                b.putString("url",base_avatar());
+                Intent in = new Intent(Profile.this, View_image.class);
+                in.putExtras(b);
+                startActivity(in);
                 //  zoomer(this, avatar, "link", group_name, null);
             }
         });
         builder.show();
     }
     private void removeimage() {
-        //  try {
-//            Form form = new Form()
-//                    .add("group_id", group_id);
-//            Bridge.post(Request.api +"groups/image_delete")
-//                    .body(form)
-//                    .asString((response, object, e) -> {
-//                        if (e == null && object != null){
-//                            JSONObject jso;
-//                            try {
-//                                jso = new JSONObject(object);
-//
-//                                if (jso.getString("status").contentEquals("1") ) {
-//                                    group_image.setImageResource(R.drawable.group_default_dp);
-//
-//                                    List<Chat> membe  = Chat.find(Chat.class, "GROUP_ID = ?",
-//                                            String.valueOf(group_id));
-//                                    membe.get(0).avatar="";
-//                                    membe.get(0).save();
-//                                    Toast.makeText(this, "Group image removed " , Toast.LENGTH_LONG).show();
-//                                }
-//                                if (jso.getString("status").contentEquals("0") ) {
-//                                    Toast.makeText(this, "Failed to removed image " , Toast.LENGTH_LONG).show();
-//                                    return;
-//                                }
-//                                mAdapter.notifyDataSetChanged();
-//                            }
-//                            catch (JSONException e1) {
-//                                e1.printStackTrace();
-//                            }
-//
-//                        }
-//                    });
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        OkHttpClient client = new OkHttpClient();
+        RequestBody body = new FormBody.Builder()
+                .add("u_id", base_u_id())
+                .build();
+        Request request = new Request.Builder().url(Constant.ipadress+"remove_avatar.php").post(body).build();
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Profile.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ifconnection(coordinatorLayout,"Update fail try again later");
+                    }}
+                );
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                final String myResponse = response.body().string();
+
+                Profile.this.runOnUiThread(() -> {
+
+                    JSONObject jso;
+
+                    try {
+                        jso = new JSONObject(myResponse);
+
+
+                        if (jso.getString("status").contentEquals("1")) {
+                            edit.putString("avatar","");
+                            edit.apply();
+
+                                    Picasso .get()
+                                            .load(R.drawable.placeholder)
+                                            .placeholder(R.drawable.placeholder)
+                                            .resize(120, 120)
+                                            .transform(new CircleTransform())
+                                            .into(pro);
+
+                        }else{
+                            ifconnection(coordinatorLayout,"failed to remove picture");
+                            return;
+
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+                );
+            }
+        });
     }
 
     public void croper(){
@@ -247,6 +278,13 @@ public class Profile extends BaseActivity {
                         .transform(new CircleTransform())
                         .into(pro);
             }
+        }else{
+            Picasso .get()
+                    .load(R.drawable.placeholder)
+                    .placeholder(R.drawable.placeholder)
+                    .resize(120, 120)
+                    .transform(new CircleTransform())
+                    .into(pro);
         }
         pro.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -457,6 +495,16 @@ public class Profile extends BaseActivity {
         catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    public static String encodeToBase64(Bitmap image) {
+        Bitmap immage = image;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        immage.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] b = baos.toByteArray();
+        String imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
+
+        Log.d("Image Log:", imageEncoded);
+        return imageEncoded;
     }
     @Override
     public void onBackPressed() {

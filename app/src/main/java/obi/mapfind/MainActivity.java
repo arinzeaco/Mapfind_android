@@ -105,7 +105,14 @@ public class MainActivity extends BaseActivity
 
         //initializing the fragment object which is selected
         switch (itemId) {
-            case R.id.find:
+            case R.id.profile:
+//                fragment = new Fragment_find();
+//                initToolbar("Find","");
+                Intent pro = new Intent(MainActivity.this, Profile.class);
+                startActivity(pro);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                break;
+                case R.id.find:
 //                fragment = new Fragment_find();
 //                initToolbar("Find","");
                 Intent inn = new Intent(MainActivity.this, Find.class);

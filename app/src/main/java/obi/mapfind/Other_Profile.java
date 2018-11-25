@@ -21,6 +21,9 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.IOException;
+
+import obi.mapfind.details.Profile;
+import obi.mapfind.details.View_image;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -87,6 +90,7 @@ public class Other_Profile extends BaseActivity {
             }
 
         });
+
       //  change_avatar.setOnClickListener(v -> selectImage());
     }
     public void changeLikedValue() {
@@ -204,6 +208,13 @@ public class Other_Profile extends BaseActivity {
                                                 .transform(new CircleTransform())
                                                 .into(pro);
                                     }
+                                }else{
+                                    Picasso .get()
+                                            .load(R.drawable.placeholder)
+                                            .placeholder(R.drawable.placeholder)
+                                            .resize(120, 120)
+                                            .transform(new CircleTransform())
+                                            .into(pro);
                                 }
 
                                 text_email.setText(email);
@@ -215,6 +226,17 @@ public class Other_Profile extends BaseActivity {
                                 text_address.setText(address);
 
                                 edit.apply();
+                                pro.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Bundle b = new Bundle();
+                                        //   Toast.makeText(Find.this,marker.getSnippet(),Toast.LENGTH_SHORT).show();
+                                        b.putString("url",avatar);
+                                        Intent in = new Intent(Other_Profile.this, View_image.class);
+                                        in.putExtras(b);
+                                        startActivity(in);
+                                    }
+                                });
 
                             }else{
                                 ifconnection(coordinatorLayout,"Update fail try again later");
