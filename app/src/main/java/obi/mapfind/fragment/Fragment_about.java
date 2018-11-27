@@ -6,17 +6,25 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import obi.mapfind.R;
 
 public class Fragment_about extends Fragment {
-
+    TextView about;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //returning our layout file
         //change R.layout.yourlayoutfilename for each of your fragments
-        return inflater.inflate(R.layout.fragment_about, container, false);
+        View v = inflater.inflate(R.layout.fragment_about, container, false);
+        about= v.findViewById(R.id.about);
+        about.setText("This is the first vision of an application tht lets you located peopl" +
+                "e around you based on thier profession and distance." +
+                " The Google map is used when the user inputs his/her location and the nearest person can be found. " +
+                "Registration is not to find anyone, unless you want to find the person by location");
+
+        return v;
     }
 
 

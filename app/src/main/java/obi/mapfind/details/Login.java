@@ -209,7 +209,7 @@ public class Login extends BaseActivity implements
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 if (!snapshot.exists()) {
-
+                    Log.i("tthree","tthree");
 
                     edit.putString("state", "logged");
                     edit.putString("email", tEmail);
@@ -324,11 +324,13 @@ public class Login extends BaseActivity implements
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
+            Log.i("oone","one");
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (result.isSuccess()) {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
+                Log.i("oone","one");
             } else {
 
             }
@@ -349,7 +351,7 @@ public class Login extends BaseActivity implements
                         progressDialog.show();
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-
+                            Log.i("ttwo","two");
                             FirebaseUser user = mAuth.getCurrentUser();
                             String pic=user.getPhotoUrl().toString();
                             user.getUid();
@@ -370,31 +372,6 @@ public class Login extends BaseActivity implements
 
                     }
                 });
-    }
-
-    private void showData(DataSnapshot dataSnapshot) {
-
-        for(DataSnapshot ds : dataSnapshot.getChildren()){
-            UserInformation uInfo = new UserInformation();
-            uInfo.setName(ds.child(userID).getValue(UserInformation.class).getName());
-            uInfo.setEmail(ds.child(userID).getValue(UserInformation.class).getEmail());
-            uInfo.setUrl(ds.child(userID).getValue(UserInformation.class).getUrl());
-            uInfo.setLocation(ds.child(userID).getValue(UserInformation.class).getLocation());
-            uInfo.setPhone_number(ds.child(userID).getValue(UserInformation.class).getPhone_number());
-
-            edit.putString("state", "logged");
-            edit.putString("email", uInfo.getEmail());
-            edit.putString("name", uInfo.getName());
-            edit.putString("pic", uInfo.getUrl());
-            edit.putString("phone_number", uInfo.getPhone_number());
-            edit.putString("location", uInfo.getLocation());
-            edit.apply();
-            Intent uo = new Intent(getApplicationContext(), MainActivity.class);
-            finish();
-            startActivity(uo);
-            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-
-        }
     }
 
     @Override

@@ -1,6 +1,7 @@
 package obi.mapfind.details;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -21,6 +22,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -33,8 +36,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Random;
 
 import obi.mapfind.BaseActivity;
@@ -87,8 +92,7 @@ public class Profile extends BaseActivity {
             }
             update_details();
         });
-        change_avatar= findViewById(R.id.change_avatar);
-        change_avatar.setOnClickListener(v -> selectImage());
+
         pro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,18 +103,22 @@ public class Profile extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // handle result of CropImageActivity
+
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
+
                 bitmap = null;
                 try {
                     bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), result.getUri());
                     background = new BitmapDrawable(bitmap);
+                    Log.i("oone","1");
+                    saveImage(bitmap);
                     //dispatchTakePictureIntent();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-               // saveImage(bitmap);
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Toast.makeText(this, "Cropping failed: " + result.getError(), Toast.LENGTH_LONG).show();
             }
@@ -274,6 +282,7 @@ public class Profile extends BaseActivity {
                 Picasso .get()
                         .load(base_avatar())
                         .placeholder(R.drawable.placeholder)
+                        .memoryPolicy(MemoryPolicy.NO_CACHE)
                         .resize(120, 120)
                         .transform(new CircleTransform())
                         .into(pro);
@@ -406,7 +415,7 @@ public class Profile extends BaseActivity {
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("u_id",base_u_id())
-                .addFormDataPart("image", "yes",
+                .addFormDataPart("image", String.valueOf(imagepath),
                         RequestBody.create(MediaType.parse("image/*jpg"), imagepath))
                 .build();
 
@@ -434,8 +443,6 @@ public class Profile extends BaseActivity {
                 Profile.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getApplicationContext(), myResponse,
-                                Toast.LENGTH_SHORT).show();
                         JSONObject jso;
                         try {
                             jso = new JSONObject(myResponse);
@@ -452,6 +459,7 @@ public class Profile extends BaseActivity {
                                                 .load(jso.getString("data"))
                                                 .placeholder(R.drawable.placeholder)
                                                 .error(R.drawable.error)
+                                                .memoryPolicy(MemoryPolicy.NO_CACHE)
                                                 .resize(150, 150)
                                                 .transform(new CircleTransform())
                                                 .into(pro);
@@ -476,21 +484,36 @@ public class Profile extends BaseActivity {
     }
 
     public void saveImage(Bitmap bmp) {
-        String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString();
-        File myDir = new File(root + "/saved_images_1");
-        myDir.mkdirs();
-        Random generator = new Random();
-        int n = 10000;
-        n = generator.nextInt(n);
-        String fname = "Image-" + n + ".jpg";
-        File file = new File(myDir, fname);
-        if (file.exists())
-            file.delete();
-        try {
-            FileOutputStream out = new FileOutputStream(file);
-            bmp.compress(Bitmap.CompressFormat.PNG, 100, out);
-            out.flush();
-            out.close();
+//        String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString();
+//        File myDir = new File(root + "/saved_images_1");
+//        myDir.mkdirs();
+//        Random generator = new Random();
+//        int n = 10000;
+//        n = generator.nextInt(n);
+//        String fname = "Image-" + n + ".jpg";
+//        File file = new File(myDir, fname);
+//        if (file.exists())
+//            file.delete();
+   // }
+        try{
+            int size = 0;
+            ByteArrayOutputStream bos = new ByteArrayOutputStream(size);
+            bmp.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+            byte[] bArr = bos.toByteArray();
+            bos.flush();
+            bos.close();
+
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String imageFileName = "JPEG_" + timeStamp + "_";
+
+            FileOutputStream fos = openFileOutput(imageFileName + ".jpeg", Context.MODE_PRIVATE);
+            fos.write(bArr);
+            fos.flush();
+            fos.close();
+
+            File mFile = new File(getFilesDir().getAbsolutePath(), imageFileName + ".jpeg");
+            gets(mFile.getAbsoluteFile());
+            Log.i("ppath", String.valueOf(mFile.getAbsoluteFile()));
         }
         catch (Exception e) {
             e.printStackTrace();

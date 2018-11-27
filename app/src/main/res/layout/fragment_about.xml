@@ -5,14 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/button2"
+    <TextView
+        android:id="@+id/about"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="264dp"
-        android:text="Button"
-        tools:layout_editor_absoluteX="85dp"
-        tools:layout_editor_absoluteY="115dp" />
+        android:layout_marginTop="97dp"
+        android:text="TextView"
+        android:textSize="18sp" />
 </RelativeLayout>
