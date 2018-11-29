@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -72,7 +73,7 @@ public class Profile extends BaseActivity {
     SharedPreferences.Editor edit;
     private SearchableSpinner profession;
     private ArrayAdapter professionAdapter;
-    Button change_avatar;  String userChoosenTask;
+     String userChoosenTask; ImageButton clear;
 
 
     @Override
@@ -84,6 +85,7 @@ public class Profile extends BaseActivity {
         edit = sp.edit();
         Profile_data();
         initToolbar("Profile","Save");
+        clear= findViewById(R.id.clear);
         right_text= findViewById(R.id.right_text);
         right_text.setOnClickListener(v -> {
             if(!isOnline(Profile.this)){
@@ -97,6 +99,14 @@ public class Profile extends BaseActivity {
             @Override
             public void onClick(View v) {
                 selectImage();
+            }
+        });
+        clear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int pos = new ArrayList<String>(Arrays.asList(Constant.professionlist)).indexOf("");
+
+                profession.setSelection(pos-1);
             }
         });
     }
@@ -113,14 +123,13 @@ public class Profile extends BaseActivity {
                 try {
                     bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), result.getUri());
                     background = new BitmapDrawable(bitmap);
-                    Log.i("oone","1");
                     saveImage(bitmap);
-                    //dispatchTakePictureIntent();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                Toast.makeText(this, "Cropping failed: " + result.getError(), Toast.LENGTH_LONG).show();
+                ifconnection(coordinatorLayout,"Cropping failed: " + result.getError());
+
             }
         }
     }
@@ -145,12 +154,10 @@ public class Profile extends BaseActivity {
             }else if (items[item].equals("View Image")){
 
                 Bundle b = new Bundle();
-                //   Toast.makeText(Find.this,marker.getSnippet(),Toast.LENGTH_SHORT).show();
-                b.putString("url",base_avatar());
+              b.putString("url",base_avatar());
                 Intent in = new Intent(Profile.this, View_image.class);
                 in.putExtras(b);
                 startActivity(in);
-                //  zoomer(this, avatar, "link", group_name, null);
             }
         });
         builder.show();
@@ -455,6 +462,7 @@ public class Profile extends BaseActivity {
 
                                 if (loggedin().contentEquals("yes")) {
                                     if (!(jso.getString("data").contentEquals(""))) {
+                                      Log.i("prodata",jso.getString("data"));
                                         Picasso.get()
                                                 .load(jso.getString("data"))
                                                 .placeholder(R.drawable.placeholder)

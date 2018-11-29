@@ -56,7 +56,7 @@ public class Fragment_contacts extends Fragment {
         recyclerView.setLayoutManager(mLayoutManager);
        // recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        Getliked("EckVwFF5diSJZHj8iFzP1V7Abd23");
+        Getliked(((BaseActivity)getActivity()).base_u_id());
         recyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
                     @Override

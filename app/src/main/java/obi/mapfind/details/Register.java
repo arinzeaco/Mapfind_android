@@ -24,8 +24,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -59,9 +57,7 @@ public class Register extends BaseActivity implements
     EditText email, pass, conpass, firstname, lastname;
 
     private FirebaseAuth mAuth;
-    private FirebaseDatabase mFirebaseDatabase;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    private DatabaseReference myRef;
     private CoordinatorLayout coordinatorLayout;
     SharedPreferences sp;
     SharedPreferences.Editor edit;
@@ -88,11 +84,11 @@ public class Register extends BaseActivity implements
         firstname = (EditText) findViewById(R.id.firstname);
         lastname = (EditText) findViewById(R.id.lastname);
         reg = (Button) findViewById(R.id.register);
-        email.setText("omega1aco@gmail.com");
+        email.setText("arinzeaco@gmail.com");
         firstname.setText("arinze");
         lastname.setText("obi");
-        pass.setText("omega1");
-        conpass.setText("omega1");
+        pass.setText("111111");
+        conpass.setText("111111");
 
         reg.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -142,8 +138,7 @@ public class Register extends BaseActivity implements
 
         mAuth = FirebaseAuth.getInstance();
 
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-        myRef = FirebaseDatabase.getInstance().getReference();
+
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -198,32 +193,9 @@ public class Register extends BaseActivity implements
 
 
                             if (jso.getString("status").contentEquals("1")) {
-
-                                JSONObject details = jso.getJSONObject("data");
-                                String brief = details.getString("brief");
-                                String profession = details.getString("profession");
-                                String email = details.getString("email");
-                                String interest = details.getString("interest");
-                                String name = details.getString("name");
-                                String avatar = details.getString("avatar");
-                                String phone = details.getString("phone");
-                                String address = details.getString("address");
-
-                                edit.putString("loggedin", "yes");
-                                edit.putString("u_id", user.getUid());
-                                edit.putString("email", email);
-                                edit.putString("name", name);
-                                edit.putString("profession", profession);
-                                edit.putString("interest", interest);
-                                edit.putString("brief", brief);
-                                edit.putString("avatar",avatar);
-                                edit.putString("phone", phone);
-                                edit.putString("address",address);
-                                edit.putString("phone", phone);
-
-                                edit.apply();
-
-                                Intent uo = new Intent(getApplicationContext(), MainActivity.class);
+                                user = mAuth.getCurrentUser();
+                                user.sendEmailVerification();
+                                Intent uo = new Intent(Register.this, Login.class);
                                 finish();
                                 startActivity(uo);
                                 overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
@@ -269,9 +241,9 @@ public void  Register_email(String email, String password){
                 FirebaseUser user = mAuth.getCurrentUser();
                 userID = user.getUid();
                 login_mysql(userID);
-                ifconnection(coordinatorLayout,"Check your email to verify");
-                Intent intent = new Intent(Register.this, Login.class);
-                startActivity(intent);
+             //   ifconnection(coordinatorLayout,"Check your email to verify");
+//                Intent intent = new Intent(Register.this, Login.class);
+//                startActivity(intent);
 
             } else {
                 // If sign in fails, display a message to the user.

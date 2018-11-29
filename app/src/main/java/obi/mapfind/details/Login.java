@@ -34,11 +34,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -75,9 +70,7 @@ public class Login extends BaseActivity implements
     private static final int RC_SIGN_IN = 9001;
     private SignInButton btnSignIn;
     private GoogleApiClient mGoogleApiClient;
-    private FirebaseDatabase mFirebaseDatabase;
     private FirebaseAuth mAuth;
-    private DatabaseReference myRef;
     private String userID;
     FirebaseUser user;
     SharedPreferences sp;
@@ -93,8 +86,6 @@ public class Login extends BaseActivity implements
         initToolbar("Login","");
 
         mAuth = FirebaseAuth.getInstance();
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-        myRef = mFirebaseDatabase.getReference();
 
         inputEmail = findViewById(R.id.email);
         inputPassword = findViewById(R.id.password);
@@ -130,6 +121,7 @@ public class Login extends BaseActivity implements
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
+       
         btnSignIn = (SignInButton) findViewById(R.id.sign_in_button);
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -204,43 +196,14 @@ public class Login extends BaseActivity implements
         });
 
     }
-    public void gmaillog(final String tEmail, final String tName, final String tpic) {
-        myRef.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                if (!snapshot.exists()) {
-                    Log.i("tthree","tthree");
 
-                    edit.putString("state", "logged");
-                    edit.putString("email", tEmail);
-                    edit.putString("name", tName);
-                    edit.putString("pic", tpic);
-                    edit.commit();
-                    Intent uo = new Intent(getApplicationContext(), MainActivity.class);
-                    finish();
-                    startActivity(uo);
-                    overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-
-                }
-                else {
-                    login_mysql();
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-
-        });
-    }
   public void login_mysql() {
     OkHttpClient client = new OkHttpClient();
     RequestBody body = new FormBody.Builder()
             .add("u_id", user.getUid())
-            .add("name", user.getDisplayName())
-            .add("email", user.getEmail())
-            .add("avatars",user.getDisplayName())
+            .add("name", "")
+            .add("email", "")
+            .add("avatars","")
             .build();
     Request request = new Request.Builder().url(Constant.ipadress+"check_login.php").post(body).build();
     // Request request = new Request.Builder().url("http://10.0.2.2/better/charticon.php").post(body).build();
@@ -324,9 +287,11 @@ public class Login extends BaseActivity implements
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
-            Log.i("oone","one");
+           // Log.i("oone","one");
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            Log.i("oone", String.valueOf(result));
             if (result.isSuccess()) {
+
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
@@ -360,7 +325,7 @@ public class Login extends BaseActivity implements
 
                             edit.putString("userID", userID);
                             edit.apply();
-                            gmaillog(user.getEmail(),user.getDisplayName(),pic);
+                            login_mysql();
                             progressDialog.dismiss();
                         } else {
                             // If sign in fails, display a message to the user.

@@ -235,7 +235,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
             location="Nigeria";
         }
 
-        if ( !mAutocompleteTextView.getText().toString().isEmpty()) {
             Geocoder geocoder = new Geocoder(this);
             try {
                 addressList = geocoder.getFromLocationName(location, 1);
@@ -243,7 +242,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
+
             Address address = addressList.get(0);
 
         // Add a marker in Sydney and move the camera

@@ -5,12 +5,15 @@ package obi.mapfind;
  */
 
 public class Constant {
+
 //   public static String ipadress="http://192.168.0.142/maphpandroid/";
- public static String ipadress="http://192.168.4.104/maphpandroid/";
-public   static String INVITE_MESSAGE = "I'm inviting you to Mapfind, that allows you fin people based on their profession";
- //   public static String ipadress="http://192.168.1.102/maphpandroid/";
+// public static String ipadress="http://192.168.4.104/maphpandroid/";
+//    public static String ipadress="http://192.168.1.101/maphpandroid/";
+
+    public static String ipadress="http://192.168.1.100/maphpandroid/";
 public static String[] distance = new String[]{"5","10","15","20","30","50","100"};
-    public static String[] professionlist = new String[]{"any",
+public static String INVITE_MESSAGE = "I'm inviting you to Mapfind, that allows you fin people based on their profession";
+public static String[] professionlist = new String[]{"any profession",
                     "accountant",
                     "actor",
                     "actuary",
@@ -975,7 +978,8 @@ public static String[] distance = new String[]{"5","10","15","20","30","50","100
                     "word processor",
                     "writer",
                     "yardmaster",
-                    "zoologist"
+                    "zoologist",
+                    ""
     };
 
 

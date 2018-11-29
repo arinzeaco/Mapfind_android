@@ -36,7 +36,8 @@ public class Settings extends BaseActivity {
         in = getIntent();
         profession = findViewById(R.id.profession);
         spinner = findViewById(R.id.spinner);
-        professionAdapter = new ArrayAdapter<>(Settings.this, android.R.layout.simple_spinner_dropdown_item, Constant.professionlist);
+        String[] modifiedArray = Arrays.copyOfRange(Constant.professionlist, 1, Constant.professionlist.length);
+        professionAdapter = new ArrayAdapter<>(Settings.this, android.R.layout.simple_spinner_dropdown_item, modifiedArray);
         distanceAdapter = new ArrayAdapter<>(Settings.this, android.R.layout.simple_spinner_dropdown_item, Constant.distance);
 
         profession.setAdapter(professionAdapter);
@@ -61,7 +62,6 @@ public class Settings extends BaseActivity {
               overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
 
           });
-       //   Toast.makeText(Settings.this,sp.getString("profession_set", ""),Toast.LENGTH_SHORT).show();
 
           if(!in.hasExtra("profession_set")){
               int pos = new ArrayList<>(Arrays.asList(Constant.professionlist)).
