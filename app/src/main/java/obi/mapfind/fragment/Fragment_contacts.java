@@ -50,7 +50,7 @@ public class Fragment_contacts extends Fragment {
         recyclerView = x.findViewById(R.id.recycler_view);
         errors= (RelativeLayout) x.findViewById(R.id.errors);
         errors.setVisibility(View.GONE);
-        ba= new BaseActivity();
+
         getter = new ArrayList<>();
         final RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
