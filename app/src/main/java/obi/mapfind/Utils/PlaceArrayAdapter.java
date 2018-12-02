@@ -1,4 +1,4 @@
-package obi.mapfind.details;
+package obi.mapfind.Utils;
 
 import android.content.Context;
 import android.util.Log;
@@ -131,7 +131,7 @@ public class PlaceArrayAdapter extends ArrayAdapter<PlaceArrayAdapter.PlaceAutoc
         return null;
     }
 
-    class PlaceAutocomplete {
+    public class PlaceAutocomplete {
 
         public CharSequence placeId;
         public CharSequence description;

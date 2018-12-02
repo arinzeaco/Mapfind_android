@@ -11,16 +11,12 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
-import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,9 +38,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.io.IOException;
 import java.util.List;
 
-import obi.mapfind.BaseActivity;
-import obi.mapfind.MainActivity;
+import obi.mapfind.Utils.BaseActivity;
 import obi.mapfind.R;
+import obi.mapfind.Utils.PlaceArrayAdapter;
 
 
 public class MapsActivity extends BaseActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener,

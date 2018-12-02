@@ -6,25 +6,26 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import obi.mapfind.details.Profile;
+import obi.mapfind.Utils.BaseActivity;
+import obi.mapfind.Utils.Constant;
 
 
 public class Settings extends BaseActivity {
      SearchableSpinner profession;
      ArrayAdapter professionAdapter,distanceAdapter;
-    Spinner spinner; TextView right_text;
+    Spinner spinner; TextView right_text,dist;
     RelativeLayout coordinatorLayout;   Intent in;
-    SharedPreferences.Editor edit;
+    SharedPreferences.Editor edit;     SharedPreferences  sp;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,15 +37,20 @@ public class Settings extends BaseActivity {
         in = getIntent();
         profession = findViewById(R.id.profession);
         spinner = findViewById(R.id.spinner);
-        String[] modifiedArray = Arrays.copyOfRange(Constant.professionlist, 1, Constant.professionlist.length);
-        professionAdapter = new ArrayAdapter<>(Settings.this, android.R.layout.simple_spinner_dropdown_item, modifiedArray);
+        dist= findViewById(R.id.dist);
+        if(base_latitude().contentEquals("")){
+            spinner.setVisibility(View.GONE);
+        }else{
+            dist.setVisibility(View.GONE);
+        }
+      //  String[] modifiedArray = Arrays.copyOfRange(Constant.professionlist, 1, Constant.professionlist.length);
+        professionAdapter = new ArrayAdapter<>(Settings.this, android.R.layout.simple_spinner_dropdown_item,Constant.professionlist);
         distanceAdapter = new ArrayAdapter<>(Settings.this, android.R.layout.simple_spinner_dropdown_item, Constant.distance);
 
         profession.setAdapter(professionAdapter);
         spinner.setAdapter(distanceAdapter);
 
        details();
-
     }
       public void details(){
           coordinatorLayout = findViewById(R.id

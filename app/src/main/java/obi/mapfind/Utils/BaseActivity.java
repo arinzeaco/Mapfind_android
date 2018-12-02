@@ -1,4 +1,4 @@
-package obi.mapfind;
+package obi.mapfind.Utils;
 
 
 import android.content.Context;
@@ -11,16 +11,14 @@ import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import static java.lang.System.out;
+import obi.mapfind.R;
 
 public class BaseActivity extends FragmentActivity {
 
@@ -34,11 +32,9 @@ public class BaseActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
     }
 
-    public void initToolbarimage(){
-        backbtn = findViewById(R.id.backbtn);
-        like = findViewById(R.id.like);
-
-
+    public void initToolbarimage(String title){
+        toolbarTitle = findViewById(R.id.toolbartitle);
+        toolbarTitle.setText(title);
     }
     public void initToolbar(String title, String right_title){
         toolbarTitle = findViewById(R.id.toolbartitle);

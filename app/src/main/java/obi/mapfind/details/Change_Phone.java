@@ -18,7 +18,7 @@ import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 import java.util.concurrent.TimeUnit;
-import obi.mapfind.BaseActivity;
+import obi.mapfind.Utils.BaseActivity;
 import obi.mapfind.R;
 
 public class Change_Phone extends BaseActivity {

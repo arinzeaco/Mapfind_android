@@ -1,9 +1,12 @@
-package obi.mapfind;
+package obi.mapfind.Utils;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+
+import obi.mapfind.MainActivity;
+import obi.mapfind.R;
 
 /**
  * Created by Thinker on 7/17/2017.

@@ -6,6 +6,15 @@ public class Chart_Getter {
     public String profession;
     public String address;
     public String liked;
+    public String dist;
+
+    public String getDist() {
+        return dist;
+    }
+
+    public void setDist(String dist) {
+        this.dist = dist;
+    }
 
     public String getId() {
         return id;

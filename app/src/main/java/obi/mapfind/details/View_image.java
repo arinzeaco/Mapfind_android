@@ -1,17 +1,13 @@
 package obi.mapfind.details;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
-import obi.mapfind.BaseActivity;
-import obi.mapfind.CircleTransform;
+import obi.mapfind.Utils.BaseActivity;
+import obi.mapfind.Utils.CircleTransform;
 import obi.mapfind.R;
 
 public class View_image extends BaseActivity {

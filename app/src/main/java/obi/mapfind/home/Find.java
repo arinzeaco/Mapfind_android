@@ -10,9 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -33,8 +31,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-import obi.mapfind.BaseActivity;
-import obi.mapfind.Constant;
+import obi.mapfind.Utils.BaseActivity;
+import obi.mapfind.Utils.Constant;
 import obi.mapfind.Other_Profile;
 import obi.mapfind.R;
 import okhttp3.Call;
@@ -85,20 +83,6 @@ public class Find extends BaseActivity implements
 
         coordinatorLayout = findViewById(R.id
                 .layouts);
-
-//        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-//            @Override
-//            public boolean onMarkerClick(Marker marker) {
-//                LatLng position = marker.getPosition();
-//
-//                Toast.makeText(
-//                        Find.this,
-//                        "Lat " + marker.getId() + " "
-//                                + "Long " + position.longitude,
-//                        Toast.LENGTH_LONG).show();
-//                return true;
-//            }
-//        });
 
     }
 

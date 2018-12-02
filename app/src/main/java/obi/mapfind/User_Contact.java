@@ -1,18 +1,13 @@
-package obi.mapfind.fragment;
+package obi.mapfind;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import org.json.JSONArray;
@@ -23,11 +18,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import obi.mapfind.BaseActivity;
-import obi.mapfind.Constant;
-import obi.mapfind.EmptyRecyclerViewAdapter;
-import obi.mapfind.Other_Profile;
-import obi.mapfind.R;
+import obi.mapfind.Utils.BaseActivity;
+import obi.mapfind.Utils.Constant;
+import obi.mapfind.Utils.EmptyRecyclerViewAdapter;
+import obi.mapfind.fragment.Chart_Adapter;
+import obi.mapfind.fragment.Chart_Getter;
+import obi.mapfind.Utils.RecyclerItemClickListener;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -36,29 +32,28 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class Fragment_contacts extends Fragment {
+public class User_Contact extends BaseActivity {
     private RecyclerView recyclerView;
     RelativeLayout errors;   private List<Chart_Getter> getter;
     Chart_Adapter chart_Adapter;
     BaseActivity ba;
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        //returning our layout file
-        //change R.layout.yourlayoutfilename for each of your fragments
-        final RelativeLayout x = (RelativeLayout) inflater.inflate(R.layout.fragment_contacts, container, false);
-        recyclerView = x.findViewById(R.id.recycler_view);
-        errors= (RelativeLayout) x.findViewById(R.id.errors);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.contacts);
+        initToolbar("Contacts","");
+        recyclerView = findViewById(R.id.recycler_view);
+        errors= (RelativeLayout) findViewById(R.id.errors);
         errors.setVisibility(View.GONE);
 
         getter = new ArrayList<>();
-        final RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        final RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(User_Contact.this);
         recyclerView.setLayoutManager(mLayoutManager);
-       // recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
+        // recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        Getliked(((BaseActivity)getActivity()).base_u_id());
+        Getliked(base_u_id());
         recyclerView.addOnItemTouchListener(
-                new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
+                new RecyclerItemClickListener(User_Contact.this, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View v, int position) {
 
@@ -67,7 +62,7 @@ public class Fragment_contacts extends Fragment {
                         b.putString("userid", String.valueOf(getter.get(position).getId()));
 
 
-                        Intent in = new Intent(getActivity(), Other_Profile.class);
+                        Intent in = new Intent(User_Contact.this, Other_Profile.class);
 
                         in.putExtras(b);
                         startActivity(in);
@@ -75,16 +70,8 @@ public class Fragment_contacts extends Fragment {
                     }
                 })
         );
-        return x;
     }
 
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        //you can set the title for your toolbar here for different fragments different titles
-        getActivity().setTitle("Menu 1");
-    }
     public void Getliked(String userid) {
 
         OkHttpClient client = new OkHttpClient();
@@ -99,8 +86,8 @@ public class Fragment_contacts extends Fragment {
             public void onFailure(Call call, IOException e) {
                 // Toast.makeText(getActivity(), getId(),
                 //       Toast.LENGTH_SHORT).show();
-                if (getActivity()!=null) {
-                    getActivity().runOnUiThread(new Runnable() {
+                if (User_Contact.this!=null) {
+                    User_Contact.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             errors.setVisibility(View.VISIBLE);
@@ -114,8 +101,8 @@ public class Fragment_contacts extends Fragment {
             public void onResponse(Call call, Response response) throws IOException {
                 final String myResponse = response.body().string();
                 Log.i("datass",myResponse);
-                if (getActivity()!=null) {
-                    getActivity().runOnUiThread(new Runnable() {
+                if (User_Contact.this!=null) {
+                    User_Contact.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
 
@@ -131,6 +118,7 @@ public class Fragment_contacts extends Fragment {
                                         String profession = details.getJSONObject(i).getString("profession");
 //                                String email = details.getString("email");
 //                                String interest = details.getString("interest");
+                                        String dist =details.getJSONObject(i).getString("dist");
                                         String name =details.getJSONObject(i).getString("name");
                                         String avatar = details.getJSONObject(i).getString("avatar");
                                         String phone = details.getJSONObject(i).getString("phone");
@@ -144,17 +132,18 @@ public class Fragment_contacts extends Fragment {
                                         detailList.setImage(avatar);
                                         detailList.setProfession(profession);
                                         detailList.setAddress(address);
+                                        detailList.setDist(dist);
                                         detailList.setLiked("yes");
                                         getter.add(detailList);
 
 
-                                        chart_Adapter = new Chart_Adapter(getActivity(),getter);
+                                        chart_Adapter = new Chart_Adapter(User_Contact.this,getter);
                                         recyclerView.setAdapter(chart_Adapter);
                                         chart_Adapter.notifyDataSetChanged();
 
                                     }
                                 } else if (jso.getString("success").contentEquals("2")) {
-                                EmptyRecyclerViewAdapter    empt = new EmptyRecyclerViewAdapter("You have not item for sell");
+                                    EmptyRecyclerViewAdapter empt = new EmptyRecyclerViewAdapter("You have not item for sell");
                                     recyclerView.setAdapter(empt);
                                 }
 

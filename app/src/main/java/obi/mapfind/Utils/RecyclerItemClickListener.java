@@ -1,4 +1,4 @@
-package obi.mapfind.fragment;
+package obi.mapfind.Utils;
 
 import android.content.Context;
 import android.support.v4.app.FragmentActivity;

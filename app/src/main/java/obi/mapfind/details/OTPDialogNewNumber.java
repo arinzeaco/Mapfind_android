@@ -2,13 +2,11 @@ package obi.mapfind.details;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -31,11 +29,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.concurrent.Executor;
 
-import obi.mapfind.BaseActivity;
-import obi.mapfind.Constant;
-import obi.mapfind.MainActivity;
+import obi.mapfind.Utils.BaseActivity;
+import obi.mapfind.Utils.Constant;
 import obi.mapfind.R;
 import okhttp3.Call;
 import okhttp3.Callback;

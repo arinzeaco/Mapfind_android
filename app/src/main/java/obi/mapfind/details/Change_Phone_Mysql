@@ -17,8 +17,8 @@
 //
 //import java.io.IOException;
 //
-//import obi.mapfind.BaseActivity;
-//import obi.mapfind.Constant;
+//import obi.mapfind.Utils.BaseActivity;
+//import obi.mapfind.Utils.Constant;
 //import obi.mapfind.MainActivity;
 //import obi.mapfind.R;
 //import okhttp3.Call;

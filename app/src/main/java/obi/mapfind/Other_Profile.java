@@ -2,7 +2,6 @@ package obi.mapfind;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -10,11 +9,9 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -22,7 +19,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.IOException;
 
-import obi.mapfind.details.Profile;
+import obi.mapfind.Utils.BaseActivity;
+import obi.mapfind.Utils.CircleTransform;
+import obi.mapfind.Utils.Constant;
 import obi.mapfind.details.View_image;
 import okhttp3.Call;
 import okhttp3.Callback;

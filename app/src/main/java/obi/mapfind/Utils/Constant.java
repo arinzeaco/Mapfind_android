@@ -1,4 +1,4 @@
-package obi.mapfind;
+package obi.mapfind.Utils;
 
 /**
  * Created by hp on 06/05/2018.

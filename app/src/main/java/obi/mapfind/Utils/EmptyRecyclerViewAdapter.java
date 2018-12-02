@@ -1,10 +1,12 @@
-package obi.mapfind;
+package obi.mapfind.Utils;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import obi.mapfind.R;
 
 
 public class EmptyRecyclerViewAdapter extends RecyclerView.Adapter<EmptyRecyclerViewAdapter.ViewHolder> {

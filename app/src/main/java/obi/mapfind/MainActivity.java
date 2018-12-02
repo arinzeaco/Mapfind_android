@@ -41,14 +41,12 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+import obi.mapfind.Utils.BaseActivity;
+import obi.mapfind.Utils.CircleTransform;
+import obi.mapfind.Utils.Constant;
 import obi.mapfind.details.Login;
 import obi.mapfind.details.Profile;
-import obi.mapfind.fragment.Fragment_about;
-import obi.mapfind.fragment.Fragment_contacts;
-import obi.mapfind.fragment.Fragment_find;
-import obi.mapfind.fragment.Fragment_invite;
 import obi.mapfind.home.CustomInfoWindowGoogleMap;
-import obi.mapfind.home.Find;
 import obi.mapfind.home.InfoWindowData;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -72,7 +70,7 @@ public class MainActivity extends BaseActivity
     private static final String TAG = "MainActivity";
     private static final int GOOGLE_API_CLIENT_ID = 0;
     LinearLayout coordinatorLayout;
-    double lat, lon;
+    double lat, lon; SupportMapFragment mapFragment;
     Intent in;
 
 
@@ -94,7 +92,7 @@ public class MainActivity extends BaseActivity
         edit = sp.edit();
 
         in = getIntent();
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+         mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
 
         mapFragment.getMapAsync(this);
@@ -140,7 +138,12 @@ public class MainActivity extends BaseActivity
             }
             name.setText(base_name());
         }
+        if (mMap == null) {
+            mapFragment.getMapAsync(this);
 
+        } else {
+            ifconnection(coordinatorLayout,"Failed to find try again later");
+        }
     }
     @Override
     public void onBackPressed() {
@@ -169,22 +172,14 @@ public class MainActivity extends BaseActivity
         //initializing the fragment object which is selected
         switch (itemId) {
             case R.id.profile:
-//                fragment = new Fragment_find();
-//                initToolbar("Find","");
                 Intent pro = new Intent(MainActivity.this, Profile.class);
                 startActivity(pro);
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 break;
-                case R.id.find:
-                fragment = new Fragment_find();
-                initToolbar("Find","");
-//                Intent inn = new Intent(MainActivity.this, Find.class);
-//                startActivity(inn);
-//                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                break;
             case R.id.contacts:
-                fragment = new Fragment_contacts();
-                initToolbar("Contacts","");
+                Intent in = new Intent(MainActivity.this, User_Contact.class);
+                startActivity(in);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 break;
             case R.id.invite:
                 Intent tweetIntent = new Intent(Intent.ACTION_SEND);
@@ -193,15 +188,16 @@ public class MainActivity extends BaseActivity
                 startActivity(tweetIntent);
                 break;
             case R.id.settings:
-                Intent in = new Intent(MainActivity.this, Settings.class);
-                startActivity(in);
+                Intent se = new Intent(MainActivity.this, Settings.class);
+                startActivity(se);
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 //                fragment = new Fragment_settings();
 //                initToolbar("Settings","");
                 break;
             case R.id.about:
-                fragment = new Fragment_about();
-                initToolbar("About","");
+                Intent ab = new Intent(MainActivity.this, About.class);
+                startActivity(ab);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 break;
         }
 
@@ -228,7 +224,7 @@ public class MainActivity extends BaseActivity
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
+        ifconnection(coordinatorLayout,"Failed to find try again later");
     }
 
     @Override
@@ -339,7 +335,7 @@ public class MainActivity extends BaseActivity
                                                             });
                                                         }
                                                     }else{
-                                                    //    ifconnection(coordinatorLayout,"Failed to find try again later");
+                                                        ifconnection(coordinatorLayout,"Failed to find try again later");
                                                         return;
 
                                                     }

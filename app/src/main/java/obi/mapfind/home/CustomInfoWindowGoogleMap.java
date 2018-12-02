@@ -2,21 +2,16 @@ package obi.mapfind.home;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 import com.squareup.picasso.Picasso;
 
-import obi.mapfind.CircleTransform;
-import obi.mapfind.Other_Profile;
+import obi.mapfind.Utils.CircleTransform;
 import obi.mapfind.R;
-import obi.mapfind.home.InfoWindowData;
 
 public class CustomInfoWindowGoogleMap implements GoogleMap.InfoWindowAdapter {
 
