@@ -9,6 +9,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -33,10 +34,10 @@ import okhttp3.Response;
 
 public class Other_Profile extends BaseActivity {
 
-    TextView text_name,text_email,text_phone,text_address,
+    TextView text_email,text_phone,text_address,
             text_profession ,text_brief;
    ImageView pro;
-
+    TextView text_name;
     TextView right_text;
     SharedPreferences sp;   String likevalue;
     BitmapDrawable background;
@@ -65,6 +66,7 @@ public class Other_Profile extends BaseActivity {
         //  interest = findViewById(R.id.interest);
         text_brief = findViewById(R.id.brief);
         like_icon =  findViewById(R.id.like_icon);
+        //clikable();
         if(!isOnline(Other_Profile.this)){
             ifconnection(coordinatorLayout,"No internet connection");
             return;
@@ -252,7 +254,21 @@ public class Other_Profile extends BaseActivity {
             }
         });
     }
-
+//  public void clikable(){
+//     // text_name.setEnabled(false);
+//      text_email.setEnabled(false);
+//      text_phone.setEnabled(false);
+//      text_address.setEnabled(false);
+//      text_profession.setEnabled(false);
+//      text_brief.setEnabled(false);
+//
+//      text_name.setClickable(false);
+//      text_email.setClickable(false);
+//      text_phone.setClickable(false);
+//      text_address.setClickable(false);
+//      text_profession.setClickable(false);
+//      text_brief.setClickable(false);
+//  }
     @Override
     public void onBackPressed() {
         super.onBackPressed();

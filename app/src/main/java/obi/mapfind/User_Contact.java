@@ -118,7 +118,7 @@ public class User_Contact extends BaseActivity {
                                         String profession = details.getJSONObject(i).getString("profession");
 //                                String email = details.getString("email");
 //                                String interest = details.getString("interest");
-                                        String dist =details.getJSONObject(i).getString("dist");
+                                      //  String dist =details.getJSONObject(i).getString("dist");
                                         String name =details.getJSONObject(i).getString("name");
                                         String avatar = details.getJSONObject(i).getString("avatar");
                                         String phone = details.getJSONObject(i).getString("phone");
@@ -132,7 +132,7 @@ public class User_Contact extends BaseActivity {
                                         detailList.setImage(avatar);
                                         detailList.setProfession(profession);
                                         detailList.setAddress(address);
-                                        detailList.setDist(dist);
+                                      //  detailList.setDist(dist);
                                         detailList.setLiked("yes");
                                         getter.add(detailList);
 

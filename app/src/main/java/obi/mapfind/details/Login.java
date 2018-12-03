@@ -81,7 +81,7 @@ public class Login extends BaseActivity implements
 
         mAuth = FirebaseAuth.getInstance();
 
-        inputEmail = findViewById(R.id.email);
+        inputEmail = findViewById(R.id.name);
         inputPassword = findViewById(R.id.password);
         coordinatorLayout = findViewById(R.id
                 .layouts);

@@ -35,7 +35,7 @@ public class MyViewHolder extends RecyclerView.ViewHolder {
         name = view.findViewById(R.id.name);
        image = view.findViewById(R.id.image);
         address = view.findViewById(R.id.address);
-        distance = view.findViewById(R.id.distance);
+       // distance = view.findViewById(R.id.distance);
     }
 }
 
@@ -58,7 +58,7 @@ public class MyViewHolder extends RecyclerView.ViewHolder {
 
         holder.name.setText(chartList.get(position).getName());
         holder.address.setText(chartList.get(position).getAddress());
-        holder.distance.setText(chartList.get(position).getDist());
+      //  holder.distance.setText(chartList.get(position).getDist());
         if(!chartList.get(position).getImage().contentEquals("")) {
 
                 Picasso.get()

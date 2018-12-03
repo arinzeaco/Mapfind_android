@@ -74,7 +74,7 @@ public class Register extends BaseActivity implements
                 .layouts);
 
        // progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        email = (EditText) findViewById(R.id.email);
+        email = (EditText) findViewById(R.id.name);
         pass = (EditText) findViewById(R.id.password);
         conpass = (EditText) findViewById(R.id.password2);
 

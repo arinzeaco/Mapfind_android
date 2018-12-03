@@ -232,7 +232,7 @@ public class Profile extends BaseActivity {
                 .layouts);
         pro =  findViewById(R.id.propic);
         name = findViewById(R.id.name);
-        email = findViewById(R.id.email);
+        email = findViewById(R.id.name);
         phone= findViewById(R.id.phone);
         address = findViewById(R.id.address);
         profession = findViewById(R.id.profession);
