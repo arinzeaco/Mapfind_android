@@ -9,6 +9,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,6 +23,7 @@ import java.util.List;
 import obi.mapfind.Utils.BaseActivity;
 import obi.mapfind.Utils.Constant;
 import obi.mapfind.Utils.EmptyRecyclerViewAdapter;
+import obi.mapfind.details.ProgressBarClass;
 import obi.mapfind.fragment.Chart_Adapter;
 import obi.mapfind.fragment.Chart_Getter;
 import obi.mapfind.Utils.RecyclerItemClickListener;
@@ -36,13 +39,18 @@ public class User_Contact extends BaseActivity {
     private RecyclerView recyclerView;
     RelativeLayout errors;   private List<Chart_Getter> getter;
     Chart_Adapter chart_Adapter;
-    BaseActivity ba;
+    BaseActivity ba; TextView try_again;
+    ProgressBarClass progressDialog;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.contacts);
         initToolbar("Contacts","");
+        progressDialog = new ProgressBarClass(this);
+        progressDialog.txtTitle.setText("Loading.........");
+        progressDialog.show();
         recyclerView = findViewById(R.id.recycler_view);
+        try_again= findViewById(R.id.try_again);
         errors= (RelativeLayout) findViewById(R.id.errors);
         errors.setVisibility(View.GONE);
 
@@ -52,6 +60,9 @@ public class User_Contact extends BaseActivity {
         // recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         Getliked(base_u_id());
+        try_again.setOnClickListener(v -> {
+            Getliked(base_u_id());
+        });
         recyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(User_Contact.this, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
@@ -86,6 +97,7 @@ public class User_Contact extends BaseActivity {
             public void onFailure(Call call, IOException e) {
                 // Toast.makeText(getActivity(), getId(),
                 //       Toast.LENGTH_SHORT).show();
+                progressDialog.dismiss();
                 if (User_Contact.this!=null) {
                     User_Contact.this.runOnUiThread(new Runnable() {
                         @Override
@@ -99,6 +111,7 @@ public class User_Contact extends BaseActivity {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+                progressDialog.dismiss();
                 final String myResponse = response.body().string();
                 Log.i("datass",myResponse);
                 if (User_Contact.this!=null) {
@@ -142,8 +155,10 @@ public class User_Contact extends BaseActivity {
                                         chart_Adapter.notifyDataSetChanged();
 
                                     }
-                                } else if (jso.getString("success").contentEquals("2")) {
-                                    EmptyRecyclerViewAdapter empt = new EmptyRecyclerViewAdapter("You have not item for sell");
+                                } else if (jso.getString("status").contentEquals("2")) {
+                                    Toast.makeText(getApplicationContext(),
+                                           "Like a profile to add to contacts", Toast.LENGTH_SHORT).show();
+                                    EmptyRecyclerViewAdapter empt = new EmptyRecyclerViewAdapter("You have no liked contacts");
                                     recyclerView.setAdapter(empt);
                                 }
 
@@ -156,5 +171,11 @@ public class User_Contact extends BaseActivity {
                 }
             }
         });
+    }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        this.finish();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 }

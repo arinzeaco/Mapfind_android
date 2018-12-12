@@ -1,28 +1,29 @@
 package obi.mapfind;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.IOException;
-
 import obi.mapfind.Utils.BaseActivity;
 import obi.mapfind.Utils.CircleTransform;
 import obi.mapfind.Utils.Constant;
+import obi.mapfind.details.ProgressBarClass;
 import obi.mapfind.details.View_image;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -43,9 +44,9 @@ public class Other_Profile extends BaseActivity {
     BitmapDrawable background;
     RelativeLayout coordinatorLayout;
     SharedPreferences.Editor edit;
-    Button change_avatar;
     Intent in;
-    Bundle b; ImageView like_icon;
+    Bundle b; ImageView like_icon;   ImageButton backbtn,image_call,image_email;
+    ProgressBarClass progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,10 +64,36 @@ public class Other_Profile extends BaseActivity {
         text_phone= findViewById(R.id.phone);
         text_address = findViewById(R.id.address);
         text_profession = findViewById(R.id.profession);
-        //  interest = findViewById(R.id.interest);
         text_brief = findViewById(R.id.brief);
         like_icon =  findViewById(R.id.like_icon);
+        backbtn = findViewById(R.id.backbtn);
+        image_call = findViewById(R.id.image_call);
+        image_email = findViewById(R.id.image_email);
+        progressDialog = new ProgressBarClass(this);
+        progressDialog.txtTitle.setText("Loading.........");
+        progressDialog.show();
+        backbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
         //clikable();
+        image_call.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:"+text_phone.getText().toString()));
+                startActivity(intent);
+            }
+        });
+        image_email.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+sendEmail();
+            }
+        });
         if(!isOnline(Other_Profile.this)){
             ifconnection(coordinatorLayout,"No internet connection");
             return;
@@ -111,6 +138,7 @@ public class Other_Profile extends BaseActivity {
                 Other_Profile.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        progressDialog.dismiss();
             ifconnection(coordinatorLayout,"failed to add to chart try again later");
                     }}
                 );
@@ -177,6 +205,7 @@ public class Other_Profile extends BaseActivity {
                 Other_Profile.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        progressDialog.dismiss();
                         Log.i("nameoone","2");
                         JSONObject jso;
 
@@ -225,6 +254,9 @@ public class Other_Profile extends BaseActivity {
                                 text_brief.setText(brief);
                                 text_phone.setText(phone);
                                 text_address.setText(address);
+                                if(text_phone.getText().toString().contentEquals("")){
+                                    image_call.setVisibility(View.GONE);
+                                }
 
                                 edit.apply();
                                 pro.setOnClickListener(new View.OnClickListener() {
@@ -254,21 +286,24 @@ public class Other_Profile extends BaseActivity {
             }
         });
     }
-//  public void clikable(){
-//     // text_name.setEnabled(false);
-//      text_email.setEnabled(false);
-//      text_phone.setEnabled(false);
-//      text_address.setEnabled(false);
-//      text_profession.setEnabled(false);
-//      text_brief.setEnabled(false);
-//
-//      text_name.setClickable(false);
-//      text_email.setClickable(false);
-//      text_phone.setClickable(false);
-//      text_address.setClickable(false);
-//      text_profession.setClickable(false);
-//      text_brief.setClickable(false);
-//  }
+    protected void sendEmail() {
+        String[] TO = {""};
+        String[] CC = {""};
+        final Intent emailIntent  = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                "mailto","", null));
+
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, text_email.getText().toString());
+        emailIntent.putExtra(Intent.EXTRA_CC, CC);
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "From mapfind");
+        emailIntent.putExtra(Intent.EXTRA_TEXT, "");
+
+        try {
+            startActivity(Intent.createChooser(emailIntent, "Choose an Email client :"));
+            finish();
+        } catch (android.content.ActivityNotFoundException ex) {
+            ifconnection(coordinatorLayout,"Open email failed");
+        }
+    }
     @Override
     public void onBackPressed() {
         super.onBackPressed();

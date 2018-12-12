@@ -24,6 +24,10 @@
             android:id="@+id/about"
             android:icon="@drawable/info"
             android:title="About" />
+        <item
+            android:id="@+id/logout"
+            android:icon="@drawable/logout"
+            android:title="Logout" />
     </group>
 
 

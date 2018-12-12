@@ -14,13 +14,16 @@ import android.support.v7.app.AlertDialog;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
@@ -39,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
+import obi.mapfind.Other_Profile;
 import obi.mapfind.Utils.BaseActivity;
 import obi.mapfind.Utils.CircleTransform;
 import obi.mapfind.Utils.Constant;
@@ -58,13 +62,15 @@ import okhttp3.Response;
 
 public class Profile extends BaseActivity {
 
-    EditText name,email,phone,address,
-            interest,brief;
+    EditText name,email,phone,
+            brief;
+    TextView address;
     String urll; ImageView pro;
     TextView  right_text;
     SharedPreferences sp;
     Bitmap bitmap;  BitmapDrawable background;
     RelativeLayout coordinatorLayout;
+    LinearLayout addr;
     SharedPreferences.Editor edit;
     private SearchableSpinner profession;
     private ArrayAdapter professionAdapter;
@@ -80,7 +86,7 @@ public class Profile extends BaseActivity {
         edit = sp.edit();
         Profile_data();
         initToolbar("Profile","Save");
-        clear= findViewById(R.id.clear);
+      //  clear= findViewById(R.id.clear);
         right_text= findViewById(R.id.right_text);
         right_text.setOnClickListener(v -> {
             if(!isOnline(Profile.this)){
@@ -96,14 +102,33 @@ public class Profile extends BaseActivity {
                 selectImage();
             }
         });
-        clear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int pos = new ArrayList<String>(Arrays.asList(Constant.professionlist)).indexOf("");
 
-                profession.setSelection(pos-1);
+        profession.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(parent.getSelectedItem().toString().contentEquals("     --Select nothing--")){
+                    int pos = new ArrayList<>(Arrays.asList(Constant.professionlist)).indexOf("");
+
+                    profession.setSelection(pos);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+                // sometimes you need nothing here
             }
         });
+//        FirebaseAuth fAuth = FirebaseAuth.getInstance();
+//        fAuth.signOut();
+//        SharedPreferences.Editor edit = sp.edit();
+//
+//        SharedPreferences settings = Profile.this.getSharedPreferences("PreferencesName", Context.MODE_PRIVATE);
+//        settings.edit().clear().apply();
+//        edit.apply();
+//        Intent uo = new Intent(Profile.this, MainActivity.class);
+//
+//        startActivity(uo);
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -168,6 +193,7 @@ public class Profile extends BaseActivity {
 
             @Override
             public void onFailure(Call call, IOException e) {
+
                 Profile.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -178,6 +204,7 @@ public class Profile extends BaseActivity {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+
                 final String myResponse = response.body().string();
 
                 Profile.this.runOnUiThread(() -> {
@@ -232,9 +259,10 @@ public class Profile extends BaseActivity {
                 .layouts);
         pro =  findViewById(R.id.propic);
         name = findViewById(R.id.name);
-        email = findViewById(R.id.name);
+        email = findViewById(R.id.email);
         phone= findViewById(R.id.phone);
         address = findViewById(R.id.address);
+        addr = findViewById(R.id.add);
         profession = findViewById(R.id.profession);
         //  interest = findViewById(R.id.interest);
         brief = findViewById(R.id.brief);
@@ -262,7 +290,7 @@ public class Profile extends BaseActivity {
         }else{
             address.setText(base_address());
         }
-        address.setOnClickListener(new View.OnClickListener() {
+        addr.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent in = new Intent(Profile.this, MapsActivity.class);
@@ -272,8 +300,7 @@ public class Profile extends BaseActivity {
         });
 
         brief.setText(base_brief());
-        String[] modifiedArray = Arrays.copyOfRange(Constant.professionlist, 1, Constant.professionlist.length);
-        professionAdapter = new ArrayAdapter<>(Profile.this, android.R.layout.simple_spinner_dropdown_item, modifiedArray);
+        professionAdapter = new ArrayAdapter<>(Profile.this, android.R.layout.simple_spinner_dropdown_item,  Constant.professionlist);
         profession.setAdapter(professionAdapter);
 
         int pos = new ArrayList<String>(Arrays.asList(Constant.professionlist)).indexOf(base_profession());
@@ -312,6 +339,7 @@ public class Profile extends BaseActivity {
     }
 
     public void update_details() {
+
         Log.i("name",name.getText().toString());
         OkHttpClient client = new OkHttpClient();
         RequestBody body = new FormBody.Builder()
@@ -320,7 +348,7 @@ public class Profile extends BaseActivity {
                 .add("profession",profession.getSelectedItem().toString())
                 .add("brief",brief.getText().toString())
                 .add("interest",base_interest())
-                .add("phone",base_phone())
+                .add("phone",phone.getText().toString())
                 .add("address",address.getText().toString())
                 .add("latitude",base_latitude())
                 .add("longitude",base_longitude())
@@ -331,6 +359,7 @@ public class Profile extends BaseActivity {
 
             @Override
             public void onFailure(Call call, IOException e) {
+
                 Profile.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -341,6 +370,7 @@ public class Profile extends BaseActivity {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+
                 final String myResponse = response.body().string();
 
                 Profile.this.runOnUiThread(new Runnable() {
@@ -412,7 +442,6 @@ public class Profile extends BaseActivity {
     }
 
     public void gets(File imagepath){
-
         OkHttpClient client = new OkHttpClient();
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
@@ -429,6 +458,7 @@ public class Profile extends BaseActivity {
 
             @Override
             public void onFailure(Call call, IOException e) {
+
                 Profile.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -463,6 +493,7 @@ public class Profile extends BaseActivity {
                                                 .placeholder(R.drawable.placeholder)
                                                 .error(R.drawable.error)
                                                 .memoryPolicy(MemoryPolicy.NO_CACHE)
+                                                .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
                                                 .resize(150, 150)
                                                 .transform(new CircleTransform())
                                                 .into(pro);
@@ -522,16 +553,7 @@ public class Profile extends BaseActivity {
             e.printStackTrace();
         }
     }
-    public static String encodeToBase64(Bitmap image) {
-        Bitmap immage = image;
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        immage.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        byte[] b = baos.toByteArray();
-        String imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
 
-        Log.d("Image Log:", imageEncoded);
-        return imageEncoded;
-    }
     @Override
     public void onBackPressed() {
         super.onBackPressed();

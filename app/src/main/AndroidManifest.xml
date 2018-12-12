@@ -86,6 +86,14 @@
         <activity
             android:name=".About"
             android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".details.ResetPasswordActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".Splash"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

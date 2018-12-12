@@ -1,6 +1,8 @@
 package obi.mapfind;
 
 import android.Manifest;
+import android.animation.ObjectAnimator;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -12,14 +14,20 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.MenuItem;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.google.android.gms.common.ConnectionResult;
@@ -33,6 +41,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -42,6 +51,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 import obi.mapfind.Utils.BaseActivity;
+import obi.mapfind.Utils.BounceInterpolator;
 import obi.mapfind.Utils.CircleTransform;
 import obi.mapfind.Utils.Constant;
 import obi.mapfind.details.Login;
@@ -69,29 +79,52 @@ public class MainActivity extends BaseActivity
     private GoogleApiClient mGoogleApiClient;
     private static final String TAG = "MainActivity";
     private static final int GOOGLE_API_CLIENT_ID = 0;
-    LinearLayout coordinatorLayout;
+    DrawerLayout coordinatorLayout;
     double lat, lon; SupportMapFragment mapFragment;
-    Intent in;
+    Intent in;   DrawerLayout drawer;
 
-
+ImageButton menu;
     SharedPreferences sp;
     SharedPreferences.Editor edit;
+    ProgressBar  mprogressBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+//        initToolbar("","");
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         navHeader = navigationView.getHeaderView(0);
         propic= navHeader.findViewById(R.id.propic);
         name= navHeader.findViewById(R.id.name);
-        initToolbar("Find","");
+        coordinatorLayout= findViewById(R.id.drawer_layout);
+        menu= findViewById(R.id.menu);
+       drawer = findViewById(R.id.drawer_layout);
+        mprogressBar = (ProgressBar) findViewById(R.id.progressBar);
+        mprogressBar.setVisibility(View.VISIBLE);
         sp = PreferenceManager
                 .getDefaultSharedPreferences(MainActivity.this);
         edit = sp.edit();
+        if (loggedin().contentEquals("yes")) {
+            if (!(base_avatar().contentEquals(""))) {
+                Picasso.get()
+                        .load(base_avatar())
+                        .placeholder(R.drawable.profile)
+                        .error(R.drawable.placeholder)
+                        .resize(90, 90)
+                        .transform(new CircleTransform())
+                        .into(propic);
+            }
+            name.setText(base_name());
+        }
 
         in = getIntent();
+        menu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawer.openDrawer(Gravity.LEFT);
+            }
+        });
          mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
 
@@ -130,9 +163,9 @@ public class MainActivity extends BaseActivity
             if (!(base_avatar().contentEquals(""))) {
                 Picasso.get()
                         .load(base_avatar())
-                        .placeholder(R.drawable.placeholder)
-                        .error(R.drawable.error)
-                        .resize(150, 150)
+                        .placeholder(R.drawable.profile)
+                        .error(R.drawable.placeholder)
+                        .resize(90, 90)
                         .transform(new CircleTransform())
                         .into(propic);
             }
@@ -147,7 +180,7 @@ public class MainActivity extends BaseActivity
     }
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -172,14 +205,27 @@ public class MainActivity extends BaseActivity
         //initializing the fragment object which is selected
         switch (itemId) {
             case R.id.profile:
-                Intent pro = new Intent(MainActivity.this, Profile.class);
-                startActivity(pro);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                if (loggedin().contentEquals("yes")) {
+                    Intent in = new Intent(MainActivity.this, Profile.class);
+                    startActivity(in);
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                } else {
+                    Intent in = new Intent(MainActivity.this, Login.class);
+                    startActivity(in);
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+
+                }
                 break;
             case R.id.contacts:
-                Intent in = new Intent(MainActivity.this, User_Contact.class);
-                startActivity(in);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                if (loggedin().contentEquals("yes")) {
+                    Intent in = new Intent(MainActivity.this, User_Contact.class);
+                    startActivity(in);
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                } else {
+                    Intent in = new Intent(MainActivity.this, Login.class);
+                    startActivity(in);
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                }
                 break;
             case R.id.invite:
                 Intent tweetIntent = new Intent(Intent.ACTION_SEND);
@@ -198,6 +244,15 @@ public class MainActivity extends BaseActivity
                 Intent ab = new Intent(MainActivity.this, About.class);
                 startActivity(ab);
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                break;
+             case R.id.logout:
+                 FirebaseAuth fAuth = FirebaseAuth.getInstance();
+                 fAuth.signOut();
+                 PreferenceManager.getDefaultSharedPreferences(getBaseContext()).
+                         edit().clear().apply();
+                 Intent uo = new Intent(MainActivity.this, MainActivity.class);
+
+                 startActivity(uo);
                 break;
         }
 
@@ -224,25 +279,31 @@ public class MainActivity extends BaseActivity
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        ifconnection(coordinatorLayout,"Failed to find try again later");
+        ifconnection(coordinatorLayout,"Failed to find try again later Check yout internet connection");
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        String profession_set;
-        if(!in.hasExtra("profession_set")){
-            profession_set=sp.getString("profession_set", "");
-        }else{
-            profession_set="any";
-        }
 
-        String meter;
-        if(!in.hasExtra("base_meter")){
-            meter=sp.getString("base_meter", "");
-        }else{
-            meter="5";
+        String profession_set = null;
+        if(!in.hasExtra("profession_set")) {
+            if (!sp.getString("profession_set", "").contentEquals("")) {
+                profession_set = sp.getString("profession_set", "");
+            } else {
+                profession_set = "any profession";
+            }
         }
-        Log.i("filter _details",profession_set+meter);
+        String meter = null;
+        if(!in.hasExtra("base_meter") ) {
+            if (!sp.getString("base_meter", "").contentEquals("")) {
+                meter = sp.getString("base_meter", "");
+            } else {
+                meter = "5";
+            }
+        }
+//        Toast.makeText(MainActivity.this, profession_set+"  "+meter,
+//                Toast.LENGTH_SHORT).show();
+
         mMap = googleMap;
         mMap.setMaxZoomPreference(9);
         OkHttpClient client = new OkHttpClient();
@@ -262,8 +323,8 @@ public class MainActivity extends BaseActivity
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-
-                     //   ifconnection(coordinatorLayout,"Map did not load try again later");
+                        mprogressBar.setVisibility(View.GONE);
+                        ifconnection(coordinatorLayout,"Failed to find try again later Check yout internet connection");
 
                     }}
                 );
@@ -271,14 +332,16 @@ public class MainActivity extends BaseActivity
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+
                 final String myResponse = response.body().string();
 
                 MainActivity.this.runOnUiThread(new Runnable() {
+
                                             public MarkerOptions Mapss;
 
                                             @Override
                                             public void run() {
-
+                                                mprogressBar.setVisibility(View.GONE);
                                                 JSONObject jso;
                                                 try {
                                                     jso = new JSONObject(myResponse);

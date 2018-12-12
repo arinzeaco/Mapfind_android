@@ -57,7 +57,7 @@ public class Login extends BaseActivity implements
         View.OnClickListener{
     private EditText inputEmail, inputPassword;
 
-    private ProgressBar progressBar;
+    ProgressBar  mprogressBar;
     private RelativeLayout coordinatorLayout;
     private Button btnSignup, btnLogin, btnResetPassword;
     private static final String TAG = "GoogleActivity";
@@ -69,7 +69,7 @@ public class Login extends BaseActivity implements
     FirebaseUser user;
     SharedPreferences sp;
     SharedPreferences.Editor edit;
-
+    ProgressBarClass progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +80,8 @@ public class Login extends BaseActivity implements
         initToolbar("Login","");
 
         mAuth = FirebaseAuth.getInstance();
+        progressDialog = new ProgressBarClass(this);
+        progressDialog.txtTitle.setText("Please wait.........");
 
         inputEmail = findViewById(R.id.name);
         inputPassword = findViewById(R.id.password);
@@ -107,7 +109,7 @@ public class Login extends BaseActivity implements
             }
         });
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.app_name))
+                .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
 
@@ -120,6 +122,10 @@ public class Login extends BaseActivity implements
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!isOnline(Login.this)){
+                    ifconnection(coordinatorLayout,"No internet connection");
+                    return;
+                }
                 Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
                 startActivityForResult(signInIntent, RC_SIGN_IN);
             }
@@ -131,56 +137,54 @@ public class Login extends BaseActivity implements
                 final String password = inputPassword.getText().toString();
 
                 if (TextUtils.isEmpty(email)) {
-                    Toast.makeText(getApplicationContext(), "Enter email address!", Toast.LENGTH_SHORT).show();
+                    ifconnection(coordinatorLayout,"Enter email address!");
                     return;
                 }
 
                 if (TextUtils.isEmpty(password)) {
-                    Toast.makeText(getApplicationContext(), "Enter password!", Toast.LENGTH_SHORT).show();
+                    ifconnection(coordinatorLayout,"Enter password!");
+                    return;
+                }
+                if (password.length() < 6) {
+                    ifconnection(coordinatorLayout,"password must not be lest that 6 letters");
+
                     return;
                 }
                 if(!isOnline(Login.this)){
                     ifconnection(coordinatorLayout,"No internet connection");
                     return;
                 }
-                final ProgressDialog progressDialog = new ProgressDialog(Login.this,
-                        R.style.AppTheme);
-                progressDialog.setIndeterminate(true);
-                progressDialog.setMessage("Logging in...");
-                progressDialog.show();
+
                 //authenticate user
                 mAuth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener(Login.this, new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                user = mAuth.getCurrentUser();
-
+                                progressDialog.show();
                                 if (!task.isSuccessful()) {
                                     // there was an error
-                                    if (password.length() < 6) {
-                                        Toast.makeText(Login.this, "password too short",
-                                                Toast.LENGTH_SHORT).show();
-                                        return;
-                                    }
-                                    Toast.makeText(Login.this, "wrong user name or pasword",
-                                            Toast.LENGTH_SHORT).show();
-                                    progressDialog.dismiss();
+                                    ifconnection(coordinatorLayout,"wrong user name or pasword");
+
                                 } else if(task.isSuccessful()) {
+
                                     if (user.isEmailVerified()) {
+                                        progressDialog.dismiss();
                                         user.getUid();
                                         userID = user.getUid();
 
                                         edit.putString("userID", userID);
                                         edit.commit();
 
-                                        login_mysql();
-                                        progressDialog.dismiss();
+                                        login_mysql(userID,"","","","");
+
                                     }
                                     if(!user.isEmailVerified()) {
-                                        Toast.makeText(Login.this, "Please go to you mail and verify account",
-                                                Toast.LENGTH_SHORT).show();
-                                        user.sendEmailVerification();
                                         progressDialog.dismiss();
+                                        ifconnection(coordinatorLayout,"Please go to you mail and verify account");
+
+                                        user.sendEmailVerification();
+
                                     }
                                 }
                             }
@@ -191,13 +195,15 @@ public class Login extends BaseActivity implements
 
     }
 
-  public void login_mysql() {
+  public void login_mysql(String u_id, String name, String email,String avatars, String phone) {
+
     OkHttpClient client = new OkHttpClient();
     RequestBody body = new FormBody.Builder()
-            .add("u_id", user.getUid())
-            .add("name", "")
-            .add("email", "")
-            .add("avatars","")
+            .add("u_id", u_id)
+            .add("name", name)
+            .add("email", email)
+            .add("avatars",avatars)
+            .add("phone",phone)
             .build();
     Request request = new Request.Builder().url(Constant.ipadress+"check_login.php").post(body).build();
     // Request request = new Request.Builder().url("http://10.0.2.2/better/charticon.php").post(body).build();
@@ -206,17 +212,20 @@ public class Login extends BaseActivity implements
 
         @Override
         public void onFailure(Call call, IOException e) {
+
             Login.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(getApplicationContext(), "An",
-                            Toast.LENGTH_SHORT).show();
+                    progressDialog.dismiss();
+                    ifconnection(coordinatorLayout,"Login failed at this time try again later");
+
                 }}
             );
         }
 
         @Override
         public void onResponse(Call call, Response response) throws IOException {
+
             final String myResponse = response.body().string();
 
             Login.this.runOnUiThread(new Runnable() {
@@ -229,7 +238,7 @@ public class Login extends BaseActivity implements
 
 
                         if (jso.getString("status").contentEquals("1")) {
-
+                            progressDialog.dismiss();
                             JSONObject details = jso.getJSONObject("data");
                              String brief = details.getString("brief");
                              String profession = details.getString("profession");
@@ -243,7 +252,7 @@ public class Login extends BaseActivity implements
                             String latitude = details.getString("latitude");
 
                             edit.putString("loggedin", "yes");
-                            edit.putString("u_id", user.getUid());
+                            edit.putString("u_id", u_id);
                             edit.putString("email", email);
                             edit.putString("name", name);
                             edit.putString("profession", profession);
@@ -261,6 +270,7 @@ public class Login extends BaseActivity implements
                             startActivity(uo);
                             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
                         }else{
+                            progressDialog.dismiss();
                                 ifconnection(coordinatorLayout,"Login fail try aganin later");
                                 return;
 
@@ -298,34 +308,36 @@ public class Login extends BaseActivity implements
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
 
+        progressDialog.show();
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        final ProgressDialog progressDialog = new ProgressDialog(Login.this,
-                                R.style.AppTheme);
-                        progressDialog.setIndeterminate(true);
-                        progressDialog.setMessage("Signing in...");
-                        progressDialog.show();
+                        progressDialog.dismiss();
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            Log.i("ttwo","two");
+
                             FirebaseUser user = mAuth.getCurrentUser();
                             String pic=user.getPhotoUrl().toString();
-                            user.getUid();
-                            userID = user.getUid();
-
-
+                            String picture;
+                               if(pic.contentEquals("")|| pic.isEmpty()){
+                                   picture="";
+                               }else{
+                                   picture=pic;
+                               }
+                           // Log.i("ttwooo",userID);
+//                            Toast.makeText(Login.this, userID,
+//                                    Toast.LENGTH_SHORT).show();
                             edit.putString("userID", userID);
                             edit.apply();
-                            login_mysql();
-                            progressDialog.dismiss();
+
+                           login_mysql(user.getUid(),user.getDisplayName(),user.getEmail(),picture,"");
+
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            Toast.makeText(Login.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
+                            ifconnection(coordinatorLayout, "Authentication failed.");
 
                         }
 
@@ -348,6 +360,6 @@ public class Login extends BaseActivity implements
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
-        Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
+        ifconnection(coordinatorLayout,"Google Play Services error.");
     }
 }

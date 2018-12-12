@@ -205,11 +205,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
 
         Log.e(TAG, "Google Places API connection failed with error code: "
                 + connectionResult.getErrorCode());
-
-        Toast.makeText(this,
-                "Google Places API connection failed with error code:" +
-                        connectionResult.getErrorCode(),
-                Toast.LENGTH_LONG).show();
+        ifconnection(coordinatorLayout,"Google Places API connection failed with error code:" +
+                        connectionResult.getErrorCode());
 
     }
 

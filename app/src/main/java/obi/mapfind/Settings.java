@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -24,13 +25,13 @@ public class Settings extends BaseActivity {
      SearchableSpinner profession;
      ArrayAdapter professionAdapter,distanceAdapter;
     Spinner spinner; TextView right_text,dist;
-    RelativeLayout coordinatorLayout;   Intent in;
+    LinearLayout coordinatorLayout;   Intent in;
     SharedPreferences.Editor edit;     SharedPreferences  sp;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_settings);
-        initToolbar("Settings","Save");
+        initToolbar("Filter","Save");
         sp = PreferenceManager
                 .getDefaultSharedPreferences(Settings.this);
         edit = sp.edit();
@@ -43,8 +44,7 @@ public class Settings extends BaseActivity {
         }else{
             dist.setVisibility(View.GONE);
         }
-      //  String[] modifiedArray = Arrays.copyOfRange(Constant.professionlist, 1, Constant.professionlist.length);
-        professionAdapter = new ArrayAdapter<>(Settings.this, android.R.layout.simple_spinner_dropdown_item,Constant.professionlist);
+        professionAdapter = new ArrayAdapter<>(Settings.this, android.R.layout.simple_spinner_dropdown_item,Constant.professionlist_settings);
         distanceAdapter = new ArrayAdapter<>(Settings.this, android.R.layout.simple_spinner_dropdown_item, Constant.distance);
 
         profession.setAdapter(professionAdapter);
@@ -62,7 +62,8 @@ public class Settings extends BaseActivity {
               edit.putString("profession_set",profession.getSelectedItem().toString());
               edit.putString("base_meter", spinner.getSelectedItem().toString());
               edit.apply();
-              Intent uo = new Intent(getApplicationContext(), MainActivity.class);
+              Intent uo = new Intent(Settings.this
+                      , MainActivity.class);
               finish();
               startActivity(uo);
               overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
@@ -80,4 +81,10 @@ public class Settings extends BaseActivity {
              spinner.setSelection(pos);
           }
       }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        this.finish();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
 }

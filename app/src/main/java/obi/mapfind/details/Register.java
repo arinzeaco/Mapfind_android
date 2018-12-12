@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -59,7 +60,7 @@ public class Register extends BaseActivity implements
     SharedPreferences sp;
     SharedPreferences.Editor edit;
     FirebaseUser user;
-
+    ProgressBar  mprogressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,12 +73,12 @@ public class Register extends BaseActivity implements
 
         coordinatorLayout = (CoordinatorLayout)findViewById(R.id
                 .layouts);
-
+        initToolbar("Register","");
        // progressBar = (ProgressBar) findViewById(R.id.progressBar);
         email = (EditText) findViewById(R.id.name);
         pass = (EditText) findViewById(R.id.password);
         conpass = (EditText) findViewById(R.id.password2);
-
+        mprogressBar = (ProgressBar) findViewById(R.id.progressBar);
         firstname = (EditText) findViewById(R.id.firstname);
         lastname = (EditText) findViewById(R.id.lastname);
         reg = (Button) findViewById(R.id.register);
@@ -95,26 +96,25 @@ public class Register extends BaseActivity implements
                     return;
                 }
                 if (firstname.getText().toString().length() < 2) {
-                    Toast.makeText(Register.this, "Invalid Firstname", Toast.LENGTH_SHORT).show();
+                    ifconnection(coordinatorLayout,"Invalid Firstname");
                     return;
                 }
                 if (lastname.getText().toString().length() < 2) {
-                    Toast.makeText(Register.this, "Invalid Lastname", Toast.LENGTH_SHORT).show();
+                    ifconnection(coordinatorLayout,"Invalid Lastname");
                     return;
                 }
 
 
                 if (!isEmailValid(email.getText().toString())) {
-                    Toast.makeText(Register.this, "Not a valid email",
-                            Toast.LENGTH_SHORT).show();
+                    ifconnection(coordinatorLayout,"Not a valid email");
                     return;
                 }
                 if (!pass.getText().toString().contentEquals(conpass.getText().toString())) {
-                    Toast.makeText(Register.this, "Both passwords must match", Toast.LENGTH_SHORT).show();
-                    return;
+                    ifconnection(coordinatorLayout,"Both passwords must match");
+                   return;
                 }
                 if (pass.length() < 6) {
-                    Toast.makeText(getApplicationContext(), "Password too short, enter minimum 6 characters!", Toast.LENGTH_SHORT).show();
+                    ifconnection(coordinatorLayout,"Password too short, enter minimum 6 characters!");
                     return;
                 }
 
@@ -152,6 +152,7 @@ public class Register extends BaseActivity implements
     }
 
     public void login_mysql(String userid) {
+        mprogressBar.setVisibility(View.VISIBLE);
         String full_name=  firstname.getText().toString()+" "+ lastname.getText().toString();
         OkHttpClient client = new OkHttpClient();
         RequestBody body = new FormBody.Builder()
@@ -159,6 +160,7 @@ public class Register extends BaseActivity implements
                 .add("name", full_name)
                 .add("email", email.getText().toString())
                 .add("avatars","")
+                .add("phone","")
                 .build();
         Request request = new Request.Builder().url(Constant.ipadress+"check_login.php").post(body).build();
         // Request request = new Request.Builder().url("http://10.0.2.2/better/charticon.php").post(body).build();
@@ -170,6 +172,7 @@ public class Register extends BaseActivity implements
                 Register.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        mprogressBar.setVisibility(View.GONE);
             ifconnection(coordinatorLayout,"Registration failed");
                     return;
                     }}
@@ -183,7 +186,7 @@ public class Register extends BaseActivity implements
                 Register.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-
+                        mprogressBar.setVisibility(View.GONE);
                         JSONObject jso;
                         try {
                             jso = new JSONObject(myResponse);
@@ -225,15 +228,16 @@ public class Register extends BaseActivity implements
         return false;
     }
 public void  Register_email(String email, String password){
+    mprogressBar.setVisibility(View.VISIBLE);
+
     mAuth.createUserWithEmailAndPassword(email,password)
             .
-
     addOnCompleteListener(this,new OnCompleteListener<AuthResult>() {
         @Override
         public void onComplete (@NonNull Task < AuthResult > task) {
             if (task.isSuccessful()) {
+                mprogressBar.setVisibility(View.GONE);
                 // Sign in success, update UI with the signed-in user's information
-
                 Log.d(TAG, "createUserWithEmail:success");
                 FirebaseUser user = mAuth.getCurrentUser();
                 userID = user.getUid();
@@ -243,9 +247,11 @@ public void  Register_email(String email, String password){
 //                startActivity(intent);
 
             } else {
-                // If sign in fails, display a message to the user.
-                Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                ifconnection(coordinatorLayout,"Register fail try again later");
+                mprogressBar.setVisibility(View.GONE);
+                if(task.getException().toString().contains("The email address is already in use by another account")){
+                    Toast.makeText(Register.this, "The email address is already in use by another account",
+                            Toast.LENGTH_SHORT).show();
+                }
 
             }
 

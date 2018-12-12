@@ -20,6 +20,11 @@ public class About extends BaseActivity {
                 " location and the nearest person can be found. " +
                 "Registration is not to find anyone, " +
                 "unless you want to find the person by location");
-
+    }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        this.finish();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 }

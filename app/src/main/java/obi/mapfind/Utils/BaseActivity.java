@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import obi.mapfind.R;
+import obi.mapfind.details.ProgressBarClass;
 
 public class BaseActivity extends FragmentActivity {
 

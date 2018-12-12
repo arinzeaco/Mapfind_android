@@ -47,7 +47,7 @@ import static android.support.constraint.Constraints.TAG;
 class OTPDialogNewNumber extends Dialog {
     private final Context context;
 
-    private final TextView txtTitle;
+    //private final TextView txtTitle;
     private Button btnConfirm;
     EditText editTxtOTP;
 
@@ -82,9 +82,9 @@ class OTPDialogNewNumber extends Dialog {
     /*-----------------------------------------------------------------
      |     FIND REFERENCE TO ALL VIEWS
      *-----------------------------------------------------------------*/
-        txtTitle = findViewById(R.id.txtTitle);
-        btnConfirm = findViewById(R.id.btnConfirm);
-        editTxtOTP = findViewById(R.id.editTxtOTP);
+//        txtTitle = findViewById(R.id.txtTitle);
+//        btnConfirm = findViewById(R.id.btnConfirm);
+//        editTxtOTP = findViewById(R.id.editTxtOTP);
 
 
         btnConfirm.setOnClickListener(new View.OnClickListener(){
@@ -200,7 +200,7 @@ class OTPDialogNewNumber extends Dialog {
     }
 
     public void show(String message) {
-        txtTitle.setText(message);
+        //txtTitle.setText(message);
         show();
     }
 }

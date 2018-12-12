@@ -73,7 +73,7 @@
                         android:layout_height="wrap_content">
 
                         <EditText
-                            android:id="@+id/name"
+                            android:id="@+id/email"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="Email"
@@ -94,29 +94,42 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="Phone"
-                            android:inputType="textCapSentences|textMultiLine"
+                            android:inputType="number"
                             android:maxLength="2000"
                             android:maxLines="4"
                             android:scrollbars="vertical" />
                     </android.support.design.widget.TextInputLayout>
 
-                <android.support.design.widget.TextInputLayout
+                <LinearLayout
+                    android:id="@+id/add"
                     android:layout_width="match_parent"
-                    android:layout_marginTop="6dp"
-                    android:layout_height="wrap_content">
+                    android:layout_height="75dp"
+                    android:orientation="vertical">
 
-                    <EditText
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:maxLength="29"
+                        android:text="Address:" />
+
+                    <TextView
                         android:id="@+id/address"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="address"
-                        android:inputType="textCapSentences|textMultiLine"
-                        android:maxLength="2000"
-                        android:maxLines="4"
-                        android:scrollbars="vertical" />
-                </android.support.design.widget.TextInputLayout>
+                        android:layout_marginTop="10dp"
+                        android:text="address"
+                        android:textColor="#000000"
+                        android:textSize="17dp" />
+                </LinearLayout>
 
-                    <android.support.design.widget.TextInputLayout
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/bottomtab_item_resting"/>
+                <android.support.design.widget.TextInputLayout
                         android:layout_width="match_parent"
 
                         android:layout_marginTop="6dp"
@@ -125,6 +138,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+
                             android:layout_weight="1"
                             android:text="Profession" />
 
@@ -137,22 +151,21 @@
                                 android:id="@+id/profession"
                                 android:layout_width="0dp"
                                 android:layout_height="20dp"
-                                android:layout_marginStart="1dp"
-                                android:layout_marginTop="5dp"
+                                android:layout_marginTop="10dp"
                                 android:layout_weight="7"
                                 android:background="@color/transparent"
                                 android:textColor="@color/bg_dark"
                                 android:textColorHint="@color/bg_dark"
                                 android:textSize="14sp" />
 
-                            <ImageButton
-                                android:id="@+id/clear"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:background="@color/transparent"
-                                android:src="@android:drawable/btn_dialog"
-                               />
+                            <!--<ImageButton-->
+                                <!--android:id="@+id/clear"-->
+                                <!--android:layout_width="0dp"-->
+                                <!--android:layout_height="wrap_content"-->
+                                <!--android:layout_weight="1"-->
+                                <!--android:background="@color/transparent"-->
+                                <!--android:src="@android:drawable/btn_dialog"-->
+                               <!--/>-->
                         </LinearLayout>
                     </android.support.design.widget.TextInputLayout>
 
@@ -172,9 +185,15 @@
                             <!--android:scrollbars="vertical" />-->
                     <!--</android.support.design.widget.TextInputLayout>-->
 
+                <View
+                    android:id="@+id/view"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/bottomtab_item_resting"/>
+
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_marginTop="6dp"
+                    android:layout_marginTop="10dp"
                     android:layout_height="wrap_content">
 
                     <EditText
@@ -183,9 +202,9 @@
                         android:layout_height="wrap_content"
                         android:hint="brief"
                         android:inputType="textCapSentences|textMultiLine"
-                        android:maxLength="2000"
-                        android:maxLines="4"
-                        android:scrollbars="vertical" />
+                        android:maxLength="1000"
+                        android:maxLines="20"
+                    android:scrollbars="vertical" />
                 </android.support.design.widget.TextInputLayout>
 
             </LinearLayout>
