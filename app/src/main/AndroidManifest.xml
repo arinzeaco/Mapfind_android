@@ -69,7 +69,7 @@
             android:name=".details.MapsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Settings"
+            android:name=".Filter"
             android:screenOrientation="portrait" />
 
         <activity

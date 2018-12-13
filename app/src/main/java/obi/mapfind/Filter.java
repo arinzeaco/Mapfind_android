@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -21,11 +20,11 @@ import obi.mapfind.Utils.BaseActivity;
 import obi.mapfind.Utils.Constant;
 
 
-public class Settings extends BaseActivity {
+public class Filter extends BaseActivity {
      SearchableSpinner profession;
      ArrayAdapter professionAdapter,distanceAdapter;
     Spinner spinner; TextView right_text,dist;
-    LinearLayout coordinatorLayout;   Intent in;
+    LinearLayout coordinatorLayout,dis;   Intent in;
     SharedPreferences.Editor edit;     SharedPreferences  sp;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -33,23 +32,23 @@ public class Settings extends BaseActivity {
         setContentView(R.layout.fragment_settings);
         initToolbar("Filter","Save");
         sp = PreferenceManager
-                .getDefaultSharedPreferences(Settings.this);
+                .getDefaultSharedPreferences(Filter.this);
         edit = sp.edit();
         in = getIntent();
         profession = findViewById(R.id.profession);
         spinner = findViewById(R.id.spinner);
-        dist= findViewById(R.id.dist);
-        if(base_latitude().contentEquals("")){
-            spinner.setVisibility(View.GONE);
+        dis = findViewById(R.id.dis);
+        if(base_address().contentEquals("")){
+           dis.setVisibility(View.GONE);
         }else{
-            dist.setVisibility(View.GONE);
+            dis.setVisibility(View.GONE);
         }
-        professionAdapter = new ArrayAdapter<>(Settings.this, android.R.layout.simple_spinner_dropdown_item,Constant.professionlist_settings);
-        distanceAdapter = new ArrayAdapter<>(Settings.this, android.R.layout.simple_spinner_dropdown_item, Constant.distance);
+        professionAdapter = new ArrayAdapter<>(Filter.this, android.R.layout.simple_spinner_dropdown_item,Constant.professionlist_settings);
+        distanceAdapter = new ArrayAdapter<>(Filter.this, android.R.layout.simple_spinner_dropdown_item, Constant.distance);
 
         profession.setAdapter(professionAdapter);
         spinner.setAdapter(distanceAdapter);
-
+        spinner.setEnabled(false);
        details();
     }
       public void details(){
@@ -62,7 +61,7 @@ public class Settings extends BaseActivity {
               edit.putString("profession_set",profession.getSelectedItem().toString());
               edit.putString("base_meter", spinner.getSelectedItem().toString());
               edit.apply();
-              Intent uo = new Intent(Settings.this
+              Intent uo = new Intent(Filter.this
                       , MainActivity.class);
               finish();
               startActivity(uo);

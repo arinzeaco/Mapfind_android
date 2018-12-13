@@ -75,6 +75,10 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
        initToolbar("Change location","Save");
         mapFragment.getMapAsync(this);
         clear=  findViewById(R.id.clear);
+        if(!isOnline(MapsActivity.this)){
+            ifconnection(coordinatorLayout,"No internet connection");
+            return;
+        }
         clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

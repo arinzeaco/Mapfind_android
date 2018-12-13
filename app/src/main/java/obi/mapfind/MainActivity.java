@@ -1,8 +1,6 @@
 package obi.mapfind;
 
 import android.Manifest;
-import android.animation.ObjectAnimator;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -13,21 +11,17 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.MenuItem;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import com.google.android.gms.common.ConnectionResult;
@@ -51,7 +45,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 import obi.mapfind.Utils.BaseActivity;
-import obi.mapfind.Utils.BounceInterpolator;
 import obi.mapfind.Utils.CircleTransform;
 import obi.mapfind.Utils.Constant;
 import obi.mapfind.details.Login;
@@ -97,7 +90,6 @@ ImageButton menu;
         navHeader = navigationView.getHeaderView(0);
         propic= navHeader.findViewById(R.id.propic);
         name= navHeader.findViewById(R.id.name);
-        coordinatorLayout= findViewById(R.id.drawer_layout);
         menu= findViewById(R.id.menu);
        drawer = findViewById(R.id.drawer_layout);
         mprogressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -106,15 +98,15 @@ ImageButton menu;
                 .getDefaultSharedPreferences(MainActivity.this);
         edit = sp.edit();
         if (loggedin().contentEquals("yes")) {
-            if (!(base_avatar().contentEquals(""))) {
-                Picasso.get()
-                        .load(base_avatar())
-                        .placeholder(R.drawable.profile)
-                        .error(R.drawable.placeholder)
-                        .resize(90, 90)
-                        .transform(new CircleTransform())
-                        .into(propic);
-            }
+//            if (!(base_avatar().contentEquals(""))) {
+//                Picasso.get()
+//                        .load(base_avatar())
+//                        .placeholder(R.drawable.profile)
+//                        .error(R.drawable.placeholder)
+//                        .resize(90, 90)
+//                        .transform(new CircleTransform())
+//                        .into(propic);
+//            }
             name.setText(base_name());
         }
 
@@ -160,15 +152,15 @@ ImageButton menu;
     protected void onResume() {
         super.onResume();
         if (loggedin().contentEquals("yes")) {
-            if (!(base_avatar().contentEquals(""))) {
-                Picasso.get()
-                        .load(base_avatar())
-                        .placeholder(R.drawable.profile)
-                        .error(R.drawable.placeholder)
-                        .resize(90, 90)
-                        .transform(new CircleTransform())
-                        .into(propic);
-            }
+//            if (!(base_avatar().contentEquals(""))) {
+//                Picasso.get()
+//                        .load(base_avatar())
+//                        .placeholder(R.drawable.profile)
+//                        .error(R.drawable.placeholder)
+//                        .resize(90, 90)
+//                        .transform(new CircleTransform())
+//                        .into(propic);
+//            }
             name.setText(base_name());
         }
         if (mMap == null) {
@@ -234,11 +226,11 @@ ImageButton menu;
                 startActivity(tweetIntent);
                 break;
             case R.id.settings:
-                Intent se = new Intent(MainActivity.this, Settings.class);
+                Intent se = new Intent(MainActivity.this, Filter.class);
                 startActivity(se);
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 //                fragment = new Fragment_settings();
-//                initToolbar("Settings","");
+//                initToolbar("Filter","");
                 break;
             case R.id.about:
                 Intent ab = new Intent(MainActivity.this, About.class);

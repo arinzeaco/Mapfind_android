@@ -7,91 +7,91 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".Settings">
+    tools:context=".Filter">
 
     <include
         android:id="@+id/toolbar"
         layout="@layout/activity_toolbar" />
-    
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:orientation="vertical">
-    <android.support.design.widget.TextInputLayout
-        android:layout_marginTop="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Profession" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                    android:id="@+id/profession"
+                    android:layout_width="0dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="7"
+                    android:background="@color/transparent"
+                    android:textColor="@color/bg_dark"
+                    android:textColorHint="@color/bg_dark"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+        </android.support.design.widget.TextInputLayout>
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/bottomtab_item_resting" />
 
         <TextView
+            android:id="@+id/dist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Profession" />
+            android:layout_marginTop="10dp"
+            android:text="Add a address to your profile first so you can search by distance" />
 
-        <LinearLayout
+        <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content">
 
-            <com.toptoche.searchablespinnerlibrary.SearchableSpinner
-                android:id="@+id/profession"
-                android:layout_width="0dp"
-                android:layout_height="20dp"
-                android:layout_marginTop="10dp"
-                android:layout_weight="7"
-                android:background="@color/transparent"
-                android:textColor="@color/bg_dark"
-                android:textColorHint="@color/bg_dark"
-                android:textSize="14sp" />
-        </LinearLayout>
-
-    </android.support.design.widget.TextInputLayout>
-
-    <View
-        android:id="@+id/view"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/bottomtab_item_resting" />
-
-    <TextView
-        android:id="@+id/dist"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="Add a location to your profile first so you can search by distance" />
-
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-       >
-
-        <TextView
-            android:id="@+id/textView4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Distance" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <Spinner
-                android:id="@+id/spinner"
+            <LinearLayout
+                android:id="@+id/dis"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/textView4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Distance" />
 
-    </android.support.design.widget.TextInputLayout>
+                <Spinner
+                    android:id="@+id/spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
-    <View
+                <View
 
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/bottomtab_item_resting" />
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/bottomtab_item_resting" />
+
+            </LinearLayout>
+
+        </android.support.design.widget.TextInputLayout>
 
     </LinearLayout>
 </LinearLayout>
