@@ -63,9 +63,6 @@
             android:name=".details.Profile"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".details.Change_Phone"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".details.MapsActivity"
             android:screenOrientation="portrait" />
         <activity
