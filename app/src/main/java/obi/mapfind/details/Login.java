@@ -195,7 +195,7 @@ public class Login extends BaseActivity implements
 
     }
 
-  public void login_mysql(String u_id, String name, String email,String avatars, String phone) {
+  public void login_mysql(final String u_id, String name, String email, String avatars, String phone) {
 
     OkHttpClient client = new OkHttpClient();
     RequestBody body = new FormBody.Builder()
