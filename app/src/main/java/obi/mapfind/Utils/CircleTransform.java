@@ -1,4 +1,4 @@
-package obi.mapfind;
+package obi.mapfind.Utils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;

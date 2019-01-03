@@ -11,16 +11,12 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
-import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,9 +38,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.io.IOException;
 import java.util.List;
 
-import obi.mapfind.BaseActivity;
-import obi.mapfind.MainActivity;
+import obi.mapfind.Utils.BaseActivity;
 import obi.mapfind.R;
+import obi.mapfind.Utils.PlaceArrayAdapter;
 
 
 public class MapsActivity extends BaseActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener,
@@ -57,6 +53,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
     private static final String TAG = "MainActivity";
     private static final int GOOGLE_API_CLIENT_ID = 0;
     LinearLayout coordinatorLayout;
+    double lat, lon;
+
     private static final LatLngBounds BOUNDS_MOUNTAIN_VIEW = new LatLngBounds(
             new LatLng(37.398160, -122.180831), new LatLng(37.430610, -121.972090));
     ImageButton clear;  String location;     TextView  right_text;
@@ -70,12 +68,17 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
         sp = PreferenceManager
                 .getDefaultSharedPreferences(MapsActivity.this);
         edit = sp.edit();
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
        initToolbar("Change location","Save");
         mapFragment.getMapAsync(this);
         clear=  findViewById(R.id.clear);
+        if(!isOnline(MapsActivity.this)){
+            ifconnection(coordinatorLayout,"No internet connection");
+            return;
+        }
         clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,6 +86,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
             }
         });
         mAutocompleteTextView = findViewById(R.id.autoCompleteTextView);
+        mAutocompleteTextView.setText(base_address());
         mAutocompleteTextView.setThreshold(3);
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Places.GEO_DATA_API)
@@ -106,9 +110,11 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
                 }
 
                 edit.putString("address", mAutocompleteTextView.getText().toString());
+                edit.putString("longitude", String.valueOf(lon));
+                edit.putString("latitude", String.valueOf(lat));
                 edit.apply();
 
-                Intent uo = new Intent(getApplicationContext(), MainActivity.class);
+                Intent uo = new Intent(getApplicationContext(), Profile.class);
                 finish();
                 startActivity(uo);
                 overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
@@ -151,6 +157,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
         }
     };
     public void onMapSearch(String location) {
+        mMap.clear();
         List<Address> addressList = null;
 
         if (location != null || !location.equals("")) {
@@ -169,10 +176,12 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
             //mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
 
             // Add a marker in Sydney and move the camera
-            LatLng sydney = new LatLng(address.getLatitude(),  address.getLongitude());
-            mMap.addMarker(new MarkerOptions().position(sydney).title("Kathmandu, Nepal"));
+          lat = address.getLatitude();
+           lon = address.getLongitude();
+            LatLng sydney = new LatLng(lat, lon);
+            mMap.addMarker(new MarkerOptions().position(sydney).title("aut"));
 
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney,4));
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
                     PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED) {
@@ -200,11 +209,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
 
         Log.e(TAG, "Google Places API connection failed with error code: "
                 + connectionResult.getErrorCode());
-
-        Toast.makeText(this,
-                "Google Places API connection failed with error code:" +
-                        connectionResult.getErrorCode(),
-                Toast.LENGTH_LONG).show();
+        ifconnection(coordinatorLayout,"Google Places API connection failed with error code:" +
+                        connectionResult.getErrorCode());
 
     }
 
@@ -219,14 +225,13 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         List<Address> addressList = null;
-        Intent in = getIntent();
 
-        if(in.hasExtra("address")){
+        if(!mAutocompleteTextView.getText().toString().isEmpty()){
            location=base_address();
         }else{
             location="Nigeria";
         }
-        if (location != null || !location.equals("")) {
+
             Geocoder geocoder = new Geocoder(this);
             try {
                 addressList = geocoder.getFromLocationName(location, 1);
@@ -234,13 +239,13 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
+
             Address address = addressList.get(0);
 
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(address.getLatitude(),  address.getLongitude());
         mMap.addMarker(new MarkerOptions().position(sydney).title("Africa,Nigeria"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney,4));
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }

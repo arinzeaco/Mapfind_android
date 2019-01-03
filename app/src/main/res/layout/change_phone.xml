@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".details.Change_Phone"
     android:orientation="vertical"
+    android:id="@+id/layouts"
     android:background="#FFF">
 
     <include

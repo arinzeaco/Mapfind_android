@@ -1,4 +1,4 @@
-package obi.mapfind.details;
+package obi.mapfind.Utils;
 
 import android.app.Activity;
 import android.content.Intent;

@@ -6,13 +6,30 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" />
+
+
+
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/launcher"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="obi.mapfind"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
@@ -32,23 +49,48 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".BaseActivity"
+            android:name=".Utils.BaseActivity"
             android:screenOrientation="portrait" />
 
         <activity
             android:name=".details.Login"
             android:screenOrientation="portrait" />
 
+        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat"/>
+
         <activity
             android:name=".details.Profile"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".details.Change_Phone"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".details.MapsActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".Filter"
+            android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".Other_Profile"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".details.View_image"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".User_Contact"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".About"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".details.ResetPasswordActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".Splash"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

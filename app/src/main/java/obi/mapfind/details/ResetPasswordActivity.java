@@ -1,15 +1,14 @@
 package obi.mapfind.details;
 
-import android.app.ProgressDialog;
+
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.v7.app.AppCompatActivity;
+
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -19,8 +18,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import obi.mapfind.BaseActivity;
 import obi.mapfind.R;
+import obi.mapfind.Utils.BaseActivity;
 
 public class ResetPasswordActivity extends BaseActivity {
 
@@ -31,17 +30,18 @@ public class ResetPasswordActivity extends BaseActivity {
     private CoordinatorLayout coordinatorLayout;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reset_password);
-        inputEmail = (EditText) findViewById(R.id.email);
-        btnReset = (Button) findViewById(R.id.btn_reset_password);
-        btnBack = (Button) findViewById(R.id.btn_back);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        coordinatorLayout = (CoordinatorLayout)findViewById(R.id
+        initToolbar("Reset Password","");
+        inputEmail =  findViewById(R.id.email);
+        btnReset = findViewById(R.id.btn_reset_password);
+        btnBack =  findViewById(R.id.btn_back);
+        progressBar =  findViewById(R.id.progressBar);
+        coordinatorLayout = findViewById(R.id
                 .layouts);
-
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -52,39 +52,32 @@ public class ResetPasswordActivity extends BaseActivity {
         btnReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                progressBar.setVisibility(View.VISIBLE);
                 if (!isEmailValid(inputEmail.getText().toString())) {
-                    Toast.makeText(ResetPasswordActivity.this, "Not a valid email",
-                            Toast.LENGTH_SHORT).show();
+                      ifconnection(coordinatorLayout,"Not a valid email");
                     return;
                 }
                 if(!isOnline(ResetPasswordActivity.this)){
-                    ifconnection(coordinatorLayout,"No Internet connection");
+                    ifconnection(coordinatorLayout,"No internet connection");
                     return;
                 }
                 FirebaseAuth auth = FirebaseAuth.getInstance();
-                final ProgressDialog progressDialog = new ProgressDialog(ResetPasswordActivity.this);
-                progressDialog.setMessage("verifying..");
-                progressDialog.show();
-
 
                 auth.sendPasswordResetEmail(inputEmail.getText().toString())
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
+                                progressBar.setVisibility(View.GONE);
                                 if (task.isSuccessful()) {
-                                    progressDialog.dismiss();
-                                    Toast.makeText(ResetPasswordActivity.this, "Check your email for new password.",
-                                            Toast.LENGTH_SHORT).show();
+                                    ifconnection(coordinatorLayout,"Check your email for new password.");
                                 }else{
-                                    progressDialog.dismiss();
-                                    Toast.makeText(getApplicationContext(),
-                                            "Email don't exist", Toast.LENGTH_SHORT).show();
+                                    ifconnection(coordinatorLayout,"Email don't exist");
                                 }
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        progressDialog.dismiss();
+                        progressBar.setVisibility(View.GONE);
                     }
                 });
             }
