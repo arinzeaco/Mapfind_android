@@ -93,6 +93,7 @@ public class Profile extends BaseActivity {
                 ifconnection(coordinatorLayout,"No internet connection");
                 return;
             }
+            //jkhj
             update_details();
         });
 
