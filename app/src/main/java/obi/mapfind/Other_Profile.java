@@ -226,7 +226,7 @@ sendEmail();
                                 String email = details.getString("email");
                               //  String interest = details.getString("interest");
                                 String name = details.getString("name");
-                                String avatar = details.getString("avatar");
+                                final String avatar = details.getString("avatar");
                                 String phone = details.getString("phone");
                                 String address = details.getString("address");
                                 if(!avatar.contentEquals("")) {
