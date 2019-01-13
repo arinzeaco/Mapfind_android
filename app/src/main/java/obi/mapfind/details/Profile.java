@@ -87,6 +87,7 @@ public class Profile extends BaseActivity {
         Profile_data();
         initToolbar("Profile","Save");
       //  clear= findViewById(R.id.clear);
+
         right_text= findViewById(R.id.right_text);
         right_text.setOnClickListener(v -> {
             if(!isOnline(Profile.this)){
