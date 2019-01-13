@@ -35,20 +35,22 @@ public class Filter extends BaseActivity {
                 .getDefaultSharedPreferences(Filter.this);
         edit = sp.edit();
         in = getIntent();
+        dist = findViewById(R.id.dist);
         profession = findViewById(R.id.profession);
         spinner = findViewById(R.id.spinner);
         dis = findViewById(R.id.dis);
         if(base_address().contentEquals("")){
            dis.setVisibility(View.GONE);
+
         }else{
-            dis.setVisibility(View.GONE);
+            dist.setVisibility(View.GONE);
+            dis.setVisibility(View.VISIBLE);
         }
         professionAdapter = new ArrayAdapter<>(Filter.this, android.R.layout.simple_spinner_dropdown_item,Constant.professionlist_settings);
         distanceAdapter = new ArrayAdapter<>(Filter.this, android.R.layout.simple_spinner_dropdown_item, Constant.distance);
 
         profession.setAdapter(professionAdapter);
         spinner.setAdapter(distanceAdapter);
-        spinner.setEnabled(false);
        details();
     }
       public void details(){
@@ -56,10 +58,12 @@ public class Filter extends BaseActivity {
                   .layouts);
           right_text= findViewById(R.id.right_text);
           right_text.setOnClickListener(v -> {
-              Log.i("filter _details",profession.getSelectedItem().toString()+spinner.getSelectedItem().toString());
+             // Log.i("filter _details",profession.getSelectedItem().toString()+spinner.getSelectedItem().toString());
 
               edit.putString("profession_set",profession.getSelectedItem().toString());
-              edit.putString("base_meter", spinner.getSelectedItem().toString());
+              if(!base_address().contentEquals("")){
+                  edit.putString("base_meter", spinner.getSelectedItem().toString());
+              }
               edit.apply();
               Intent uo = new Intent(Filter.this
                       , MainActivity.class);
