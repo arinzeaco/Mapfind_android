@@ -120,16 +120,7 @@ public class Profile extends BaseActivity {
                 // sometimes you need nothing here
             }
         });
-//        FirebaseAuth fAuth = FirebaseAuth.getInstance();
-//        fAuth.signOut();
-//        SharedPreferences.Editor edit = sp.edit();
-//
-//        SharedPreferences settings = Profile.this.getSharedPreferences("PreferencesName", Context.MODE_PRIVATE);
-//        settings.edit().clear().apply();
-//        edit.apply();
-//        Intent uo = new Intent(Profile.this, MainActivity.class);
-//
-//        startActivity(uo);
+
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -519,17 +510,6 @@ public class Profile extends BaseActivity {
     }
 
     public void saveImage(Bitmap bmp) {
-//        String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString();
-//        File myDir = new File(root + "/saved_images_1");
-//        myDir.mkdirs();
-//        Random generator = new Random();
-//        int n = 10000;
-//        n = generator.nextInt(n);
-//        String fname = "Image-" + n + ".jpg";
-//        File file = new File(myDir, fname);
-//        if (file.exists())
-//            file.delete();
-   // }
         try{
             int size = 0;
             ByteArrayOutputStream bos = new ByteArrayOutputStream(size);

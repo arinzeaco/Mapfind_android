@@ -82,11 +82,11 @@ public class Register extends BaseActivity implements
         firstname = (EditText) findViewById(R.id.firstname);
         lastname = (EditText) findViewById(R.id.lastname);
         reg = (Button) findViewById(R.id.register);
-        email.setText("arinzeaco@gmail.com");
-        firstname.setText("arinze");
-        lastname.setText("obi");
-        pass.setText("111111");
-        conpass.setText("111111");
+//        email.setText("arinzeaco@gmail.com");
+//        firstname.setText("arinze");
+//        lastname.setText("obi");
+//        pass.setText("111111");
+//        conpass.setText("111111");
 
         reg.setOnClickListener(new View.OnClickListener() {
             @Override

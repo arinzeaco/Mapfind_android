@@ -24,6 +24,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.places.Places;
@@ -35,6 +38,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
 
@@ -73,7 +78,8 @@ public class MainActivity extends BaseActivity
     private static final String TAG = "MainActivity";
     private static final int GOOGLE_API_CLIENT_ID = 0;
     DrawerLayout coordinatorLayout;
-    double lat, lon; SupportMapFragment mapFragment;
+    private GoogleSignInClient mGoogleSignInClient;
+    SupportMapFragment mapFragment;
     Intent in;   DrawerLayout drawer;
 
 ImageButton menu;
@@ -87,26 +93,31 @@ ImageButton menu;
 //        initToolbar("","");
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        mGoogleSignInClient =  GoogleSignIn.getClient(this,gso);
         navHeader = navigationView.getHeaderView(0);
         propic= navHeader.findViewById(R.id.propic);
         name= navHeader.findViewById(R.id.name);
         menu= findViewById(R.id.menu);
        drawer = findViewById(R.id.drawer_layout);
-        mprogressBar = (ProgressBar) findViewById(R.id.progressBar);
+        mprogressBar = findViewById(R.id.progressBar);
         mprogressBar.setVisibility(View.VISIBLE);
         sp = PreferenceManager
                 .getDefaultSharedPreferences(MainActivity.this);
         edit = sp.edit();
         if (loggedin().contentEquals("yes")) {
-//            if (!(base_avatar().contentEquals(""))) {
-//                Picasso.get()
-//                        .load(base_avatar())
-//                        .placeholder(R.drawable.profile)
-//                        .error(R.drawable.placeholder)
-//                        .resize(90, 90)
-//                        .transform(new CircleTransform())
-//                        .into(propic);
-//            }
+            if (!(base_avatar().contentEquals(""))) {
+                Picasso.get()
+                        .load(base_avatar())
+                        .placeholder(R.drawable.profile)
+                        .error(R.drawable.placeholder)
+                        .resize(90, 90)
+                        .transform(new CircleTransform())
+                        .into(propic);
+            }
             name.setText(base_name());
         }
 
@@ -152,15 +163,15 @@ ImageButton menu;
     protected void onResume() {
         super.onResume();
         if (loggedin().contentEquals("yes")) {
-//            if (!(base_avatar().contentEquals(""))) {
-//                Picasso.get()
-//                        .load(base_avatar())
-//                        .placeholder(R.drawable.profile)
-//                        .error(R.drawable.placeholder)
-//                        .resize(90, 90)
-//                        .transform(new CircleTransform())
-//                        .into(propic);
-//            }
+            if (!(base_avatar().contentEquals(""))) {
+                Picasso.get()
+                        .load(base_avatar())
+                        .placeholder(R.drawable.profile)
+                        .error(R.drawable.placeholder)
+                        .resize(90, 90)
+                        .transform(new CircleTransform())
+                        .into(propic);
+            }
             name.setText(base_name());
         }
         if (mMap == null) {
@@ -238,13 +249,8 @@ ImageButton menu;
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 break;
              case R.id.logout:
-                 FirebaseAuth fAuth = FirebaseAuth.getInstance();
-                 fAuth.signOut();
-                 PreferenceManager.getDefaultSharedPreferences(getBaseContext()).
-                         edit().clear().apply();
-                 Intent uo = new Intent(MainActivity.this, MainActivity.class);
+               signOut();
 
-                 startActivity(uo);
                 break;
         }
 
@@ -408,5 +414,22 @@ ImageButton menu;
             return;
         }
         mMap.setMyLocationEnabled(true);
+    }
+    private void signOut() {
+        FirebaseAuth fAuth = FirebaseAuth.getInstance();
+        fAuth.signOut();
+
+        // Google sign out
+        mGoogleSignInClient.signOut().addOnCompleteListener(this,
+                new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        PreferenceManager.getDefaultSharedPreferences(getBaseContext()).
+                                edit().clear().apply();
+                        Intent uo = new Intent(MainActivity.this, MainActivity.class);
+
+                        startActivity(uo);
+                    }
+                });
     }
 }
