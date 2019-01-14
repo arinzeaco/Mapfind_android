@@ -6,10 +6,9 @@ package obi.mapfind.Utils;
 
 public class Constant {
 
-   // change to ypu local ip
-   public static String ipadress="http://192.168.8.100/maphpandroid/";
 
-
+  //public static String ipadress="http://192.168.8.102/maphpandroid/";
+  public static String ipadress="http://www.thecodelogic.com/maphpandroid/";
 public static String[] distance = new String[]{"5","10","15","20","30","50","100","200"};
 public static String INVITE_MESSAGE = "I'm inviting you to Mapfind, that allows you fin people based on their profession";
 public static String[] professionlist = new String[]{
