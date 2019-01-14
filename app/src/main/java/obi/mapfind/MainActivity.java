@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -395,10 +396,10 @@ ImageButton menu;
                                                                 }
                                                             });
                                                         }
-                                                    }else{
-                                                        ifconnection(coordinatorLayout,"Failed to find try again later");
-                                                        return;
+                                                    }else  if (jso.getString("status").contentEquals("2")) {
+                                                         Toast.makeText(MainActivity.this,"No Result found try a better filter",Toast.LENGTH_SHORT).show();
 
+                                                        ifconnection(coordinatorLayout,"No Result found try a better filter");
                                                     }
 
                                                 } catch (JSONException e) {
