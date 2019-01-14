@@ -154,23 +154,20 @@ public class BaseActivity extends FragmentActivity {
             Snackbar snackbar = Snackbar
                     .make(code, message, Snackbar.LENGTH_LONG);
             snackbar.setActionTextColor(Color.RED);
-
             // Changing action button text color
             View sbView = snackbar.getView();
             TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
             textView.setTextColor(Color.YELLOW);
-
             snackbar.show();
-            return;
         }
     }
-    public String formatNumber(String countryCode, String number) {
-        String formatedNumber = countryCode + number;
-        if (countryCode.contains("+234")) {
-            if (number.charAt(0) == '0') {//If the person still aded 0
-                formatedNumber = number.replaceFirst("0", "+234");
-            }
-        }
-        return formatedNumber;
-    }
+//    public String formatNumber(String countryCode, String number) {
+//        String formatedNumber = countryCode + number;
+//        if (countryCode.contains("+234")) {
+//            if (number.charAt(0) == '0') {//If the person still aded 0
+//                formatedNumber = number.replaceFirst("0", "+234");
+//            }
+//        }
+//        return formatedNumber;
+//    }
 }
