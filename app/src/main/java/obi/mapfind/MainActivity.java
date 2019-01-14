@@ -315,6 +315,7 @@ ImageButton menu;
 
         Request request = new Request.Builder().url(Constant.ipadress+"all_users.php").post(body).build();
         Call call = client.newCall(request);
+        String finalProfession_set = profession_set;
         call.enqueue(new Callback() {
 
             @Override
@@ -397,9 +398,9 @@ ImageButton menu;
                                                             });
                                                         }
                                                     }else  if (jso.getString("status").contentEquals("2")) {
-                                                         Toast.makeText(MainActivity.this,"No Result found try a better filter",Toast.LENGTH_SHORT).show();
+                                                         Toast.makeText(MainActivity.this,"Could not find any "+ finalProfession_set,Toast.LENGTH_SHORT).show();
 
-                                                        ifconnection(coordinatorLayout,"No Result found try a better filter");
+                                                        ifconnection(coordinatorLayout,"No Result found try a broder filter");
                                                     }
 
                                                 } catch (JSONException e) {
