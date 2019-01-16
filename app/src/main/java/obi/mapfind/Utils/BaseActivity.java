@@ -161,7 +161,6 @@ public class BaseActivity extends FragmentActivity {
             textView.setTextColor(Color.YELLOW);
 
             snackbar.show();
-            return;
         }
     }
     public String formatNumber(String countryCode, String number) {

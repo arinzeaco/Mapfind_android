@@ -4,13 +4,16 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -91,7 +94,10 @@ ImageButton menu;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        menu= findViewById(R.id.menu);
 //        initToolbar("","");
+        sp = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -102,13 +108,21 @@ ImageButton menu;
         navHeader = navigationView.getHeaderView(0);
         propic= navHeader.findViewById(R.id.propic);
         name= navHeader.findViewById(R.id.name);
-        menu= findViewById(R.id.menu);
        drawer = findViewById(R.id.drawer_layout);
+        menu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawer.openDrawer(Gravity.LEFT);
+            }
+        });
+        if(!isOnline(MainActivity.this)){
+            Toast.makeText(MainActivity.this, "Check your internet connection",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
         mprogressBar = findViewById(R.id.progressBar);
         mprogressBar.setVisibility(View.VISIBLE);
-        sp = PreferenceManager
-                .getDefaultSharedPreferences(MainActivity.this);
-        edit = sp.edit();
+
         if (loggedin().contentEquals("yes")) {
             if (!(base_avatar().contentEquals(""))) {
                 Picasso.get()
@@ -123,12 +137,7 @@ ImageButton menu;
         }
 
         in = getIntent();
-        menu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                drawer.openDrawer(Gravity.LEFT);
-            }
-        });
+
          mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
 
@@ -161,7 +170,7 @@ ImageButton menu;
         //add this line to display menu1 when the activity is loaded
         displaySelectedScreen(R.id.content_frame);
     }
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         if (loggedin().contentEquals("yes")) {
             if (!(base_avatar().contentEquals(""))) {
@@ -176,6 +185,11 @@ ImageButton menu;
             name.setText(base_name());
         }
         if (mMap == null) {
+            if(!isOnline(MainActivity.this)){
+                Toast.makeText(MainActivity.this, "Check your internet connection",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
             mapFragment.getMapAsync(this);
 
         } else {
@@ -278,12 +292,11 @@ ImageButton menu;
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        ifconnection(coordinatorLayout,"Failed to find try again later Check yout internet connection");
+        ifconnection(coordinatorLayout,"Failed to find try again later Check your internet connection");
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
         String profession_set = null;
         if(!in.hasExtra("profession_set")) {
             if (!sp.getString("profession_set", "").contentEquals("")) {
@@ -305,12 +318,14 @@ ImageButton menu;
 
         mMap = googleMap;
         mMap.setMaxZoomPreference(9);
+        Log.i("vvvvvvvvv",sp.getString("longitude", "")
+                +"  "+sp.getString("latitude", ""));
         OkHttpClient client = new OkHttpClient();
         RequestBody body = new FormBody.Builder()
                 .add("profession", profession_set)
                 .add("distance",meter)
-                .add("longitude",base_longitude())
-                .add("latitude",base_latitude())
+                .add("longitude",sp.getString("longitude", ""))
+                .add("latitude",sp.getString("latitude", ""))
                 .build();
 
         Request request = new Request.Builder().url(Constant.ipadress+"all_users.php").post(body).build();
@@ -324,7 +339,8 @@ ImageButton menu;
                     @Override
                     public void run() {
                         mprogressBar.setVisibility(View.GONE);
-                        ifconnection(coordinatorLayout,"Failed to find try again later Check yout internet connection");
+                      //  ifconnection(coordinatorLayout,"Failed to find try again later Check yout internet connection");
+                        Toast.makeText(MainActivity.this,"Failed to find try again later Check",Toast.LENGTH_SHORT).show();
 
                     }}
                 );
@@ -377,14 +393,14 @@ ImageButton menu;
                                                             info.setImage(avatar);
                                                             info.setUserid(userid);
                                                             info.setAddress(address);
-
+                                                            mMap.setMaxZoomPreference(20);
                                                             CustomInfoWindowGoogleMap customInfoWindow = new CustomInfoWindowGoogleMap(MainActivity.this);
                                                             mMap.setInfoWindowAdapter(customInfoWindow);
 
                                                             Marker m = mMap.addMarker(markerOptions);
                                                             m.setTag(info);
                                                             m.showInfoWindow();
-                                                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney,4));
+                                                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney,5));
                                                             mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                                                                 @Override
                                                                 public void onInfoWindowClick(Marker marker) {
@@ -400,7 +416,7 @@ ImageButton menu;
                                                     }else  if (jso.getString("status").contentEquals("2")) {
                                                          Toast.makeText(MainActivity.this,"Could not find any "+ finalProfession_set,Toast.LENGTH_SHORT).show();
 
-                                                        ifconnection(coordinatorLayout,"No Result found try a broder filter");
+                                                      //  ifconnection(coordinatorLayout,"No Result found try a broder filter");
                                                     }
 
                                                 } catch (JSONException e) {

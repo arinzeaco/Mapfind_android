@@ -109,15 +109,16 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
                     return;
                 }
 
-                edit.putString("address", mAutocompleteTextView.getText().toString());
-                edit.putString("longitude", String.valueOf(lon));
-                edit.putString("latitude", String.valueOf(lat));
-                edit.apply();
-
+                Log.i("iiiiiiiiiii", String.valueOf(lon)+"   nh "+String.valueOf(lat));
+                Bundle b = new Bundle();
+                b.putString("address", mAutocompleteTextView.getText().toString());
+                b.putString("longitude", String.valueOf(lon));
+                b.putString("latitude", String.valueOf(lat));
                 Intent uo = new Intent(getApplicationContext(), Profile.class);
-                finish();
+                uo.putExtras(b);
                 startActivity(uo);
                 overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                finish();
             }
         });
     }
@@ -169,7 +170,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
                 e.printStackTrace();
             }
             Address address = addressList.get(0);
-            mMap.setMaxZoomPreference(9);
+            mMap.setMaxZoomPreference(10);
            // LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
         //    Log.i("two ", String.valueOf(latLng));
            // mMap.addMarker(new MarkerOptions().position(latLng).title("Marker"));
@@ -179,6 +180,10 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Go
           lat = address.getLatitude();
            lon = address.getLongitude();
             LatLng sydney = new LatLng(lat, lon);
+            edit.putString("address", mAutocompleteTextView.getText().toString());
+            edit.putString("longitude", String.valueOf(lon));
+            edit.putString("latitude", String.valueOf(lat));
+            edit.apply();
             mMap.addMarker(new MarkerOptions().position(sydney).title("aut"));
 
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney,4));

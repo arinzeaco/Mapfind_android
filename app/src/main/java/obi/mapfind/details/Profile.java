@@ -75,7 +75,8 @@ public class Profile extends BaseActivity {
     private SearchableSpinner profession;
     private ArrayAdapter professionAdapter;
      String userChoosenTask; ImageButton clear;
-
+    Intent in;
+    Bundle b;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +85,8 @@ public class Profile extends BaseActivity {
         sp = PreferenceManager
                 .getDefaultSharedPreferences(Profile.this);
         edit = sp.edit();
+        in = getIntent();
+        b = in.getExtras();
         Profile_data();
         initToolbar("Profile","Save");
       //  clear= findViewById(R.id.clear);
@@ -342,8 +345,8 @@ public class Profile extends BaseActivity {
                 .add("interest",base_interest())
                 .add("phone",phone.getText().toString())
                 .add("address",address.getText().toString())
-                .add("latitude",base_latitude())
-                .add("longitude",base_longitude())
+                .add("latitude",b.getString("latitude"))
+                .add("longitude",b.getString("longitude"))
                 .build();
         Request request = new Request.Builder().url(Constant.ipadress+"update.php").post(body).build();
         Call call = client.newCall(request);
@@ -396,7 +399,6 @@ public class Profile extends BaseActivity {
                                 edit.putString("avatar",avatar);
                                 edit.putString("phone", phone);
                                 edit.putString("address",address);
-                                edit.putString("phone", phone);
 
                                 edit.apply();
 
